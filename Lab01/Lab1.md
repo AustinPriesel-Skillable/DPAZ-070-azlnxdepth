@@ -114,7 +114,7 @@ By the end of the lab, students will be able to:
 
 ### Task 3 – Connect to the Azure Linux VM
 
-1. Open Visual Studio code and navigate to **Terminal-\> New Terminal**
+1. From the desktop, Open Visual Studio code and navigate to **Terminal-\> New Terminal**
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image17.png)
 
