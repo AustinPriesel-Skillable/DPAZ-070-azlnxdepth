@@ -128,7 +128,9 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image19.png)
 
-1. **Connect to the VM. **Replace *{PUBLIC_IP}* with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
+1. **Connect to the VM. **Replace *{PUBLIC_IP}*** with the public IP address returned during VM creation.
+
+    >[!Tip] If prompted to trust the host, type yes and press Enter.
 
     `ssh -i ~/Downloads/vmKey.pem azureuser@{PUBLIC_IP}`
 
@@ -145,7 +147,7 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image21.png)
 
-1. Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native Tomcat package — double-check the version/URL against the current Apache archive, it drifts):
+1. In the Git Bash terminal, Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native Tomcat package — double-check the version/URL against the current Apache archive, it drifts):
 
     `curl -fsSL https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz%20-o%20/tmp/tomcat.tar.gz`
 
