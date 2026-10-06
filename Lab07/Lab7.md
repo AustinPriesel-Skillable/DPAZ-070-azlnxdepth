@@ -2,195 +2,169 @@
 
 ## Scenario
 
-Northwind Bank operates a digital wallet platform used by customers for
-mobile payments, peer-to-peer transfers, and online purchases.
+Northwind Bank operates a digital wallet platform used by customers for mobile payments, peer-to-peer transfers, and online purchases.
 
-The security team has mandated stronger protection for
-payment-processing infrastructure to meet regulatory and compliance
-requirements.
+The security team has mandated stronger protection for payment-processing infrastructure to meet regulatory and compliance requirements.
 
 To improve workload protection, the platform team will:
-
 - Create a secured Azure Linux AKS cluster.
-
 - Review OS Guard security capabilities.
-
 - Enable hardened node protection features.
-
 - Add a protected node pool.
-
 - Enable cluster monitoring.
-
 - Review migration considerations from OS Guard to Azure Container
   Linux.
 
-## Objectives
+
+### Objectives
 
 After completing this lab, you will be able to:
-
 - Review Azure Linux with OS Guard security features.
-
 - Enable hardened AKS security controls.
-
 - Create and manage secure AKS node pools.
-
 - Enable monitoring for secured workloads.
-
 - Validate security settings.
-
 - Understand the migration path to Azure Container Linux.
+
 
 ## Exercise 1: Prepare the Environment
 
 ### Task 1: Open Azure Cloud Shell
 
-1.  Open a browser and go to +++<https://portal.azure.com>+++ and sign
-    in with your Azure subscription.
+1. Open a browser and go to +++https://portal.azure.com+++ and sign in with your Azure subscription.
 
-2.  Click on Cloudhsell and select **Bash**
+1. Click on Cloudhsell and select **Bash**
 
-![](./media/image1.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image1.png)
 
-3.  Select your subscription and then click on **Apply**.
+1. Select your subscription and then click on **Apply**.
 
-![](./media/image2.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image2.png)
 
-4.  Run below command to Install aks-preview Extension
+1. Run below command to Install aks-preview Extension
 
-+++az extension add --name aks-preview+++
+    `az extension add --name aks-preview`
 
-If already installed:
+    If already installed:
 
-+++az extension update --name aks-preview+++
+    `az extension update --name aks-preview`
 
-![](./media/image3.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image3.png)
 
-5.  Run below command to register OS Guard preview feature
+1. Run below command to register OS Guard preview feature
 
-+++az feature register --namespace Microsoft.ContainerService --name
-AzureLinuxOSGuardPreview+++
+    `az feature register --namespace Microsoft.ContainerService --name AzureLinuxOSGuardPreview`
 
-![](./media/image4.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image4.png)
 
-6.  Run below command to verify registration:
+1. Run below command to verify registration:
 
-+++az feature show --namespace Microsoft.ContainerService --name
-AzureLinuxOSGuardPreview+++
+    `az feature show --namespace Microsoft.ContainerService --name AzureLinuxOSGuardPreview`
 
-![](./media/image5.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image5.png)
 
-7.  Run below command to register resource provider
+1. Run below command to register resource provider
 
-+++az provider register --namespace Microsoft.ContainerService+++
+    `az provider register --namespace Microsoft.ContainerService`
 
-![](./media/image6.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image6.png)
+
 
 ## Exercise 2: Create a Secure Digital Wallet AKS Cluster
 
 ### Task 1: Create Secure Cluster
 
-1.  Run below command to set environment variables.
+1. Run below command to set environment variables.
 
-\`\`\`
+    ```
+    export RESOURCE_GROUP="ResourceGroup1"
 
-export RESOURCE_GROUP="ResourceGroup1"
+    export REGION="japaneast"
 
-export REGION="japaneast"
+    export CLUSTER_NAME="walletguardcluster"
+    ```
 
-export CLUSTER_NAME="walletguardcluster"
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image7.png)
 
-\`\`\`
+1. Run below command to create secure cluster.
 
-![](./media/image7.png)
+    `az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --os-sku AzureLinuxOSGuard --node-osdisk-type Managed --enable-fips-image --enable-secure-boot --enable-vtpm --generate-ssh-keys`
 
-2.  Run below command to create secure cluster.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image8.png)
 
-+++az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
---os-sku AzureLinuxOSGuard --node-osdisk-type Managed
---enable-fips-image --enable-secure-boot --enable-vtpm
---generate-ssh-keys+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image9.png)
 
-![](./media/image8.png)
-
-![](./media/image9.png)
 
 ## Exercise 3: Connect and Validate the Secured Cluster
 
-1.  Run below command to get credentials
+1. Run below command to get credentials
 
-+++az aks get-credentials --resource-group $RESOURCE_GROUP --name
-$CLUSTER_NAME+++
+    `az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME`
 
-![](./media/image10.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image10.png)
 
-2.  Run below command to **v**erify connection:
+1. Run below command to verify connection:
 
-+++kubectl get nodes+++
+    `kubectl get nodes`
 
-![](./media/image11.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image11.png)
 
-**5.** Review cluster node pool information:
+1. Review cluster node pool information:
 
-+++az aks nodepool list --resource-group $RESOURCE_GROUP --cluster-name
-$CLUSTER_NAME+++
+    `az aks nodepool list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME`
 
-![](./media/image12.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image12.png)
+
 
 ## Exercise 4: Expand Protected Capacity
 
-1.  Run below command to add secure node pool
+1. Run below command to add secure node pool
 
-+++az aks nodepool add --resource-group $RESOURCE_GROUP --cluster-name
-$CLUSTER_NAME --name osgpool --node-count 3 --os-sku AzureLinuxOSGuard
---node-osdisk-type Managed --enable-fips-image --enable-secure-boot
---enable-vtpm+++
+    `az aks nodepool add --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --name osgpool --node-count 3 --os-sku AzureLinuxOSGuard --node-osdisk-type Managed --enable-fips-image --enable-secure-boot --enable-vtpm`
 
-![](./media/image13.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image13.png)
 
-2.  Run below command to review node pool
+1. Run below command to review node pool
 
-+++az aks nodepool list --resource-group $RESOURCE_GROUP --cluster-name
-$CLUSTER_NAME+++
+    `az aks nodepool list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME`
 
-![](./media/image14.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image14.png)
+
 
 ## Exercise 5: Enable Monitoring
 
-1.  Run below command to connect to cluster:
+1. Run below command to connect to cluster:
 
-+++az aks get-credentials --resource-group $RESOURCE_GROUP --name
-$CLUSTER_NAME+++
+    `az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME`
 
-![](./media/image15.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image15.png)
 
-2.  Run below command to register Microsoft.OperationalInsights
+1. Run below command to register Microsoft.OperationalInsights
 
-> +++az provider register --namespace Microsoft.OperationalInsights+++
+    `az provider register --namespace Microsoft.OperationalInsights`
 
-3.  Run below command to enable monitoring:
+1. Run below command to enable monitoring:
 
-+++az aks enable-addons --addons monitoring --name $CLUSTER_NAME
---resource-group $RESOURCE_GROUP+++
+    `az aks enable-addons --addons monitoring --name $CLUSTER_NAME --resource-group $RESOURCE_GROUP`
 
-![](./media/image16.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image16.png)
 
-![](./media/image17.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image17.png)
 
-4.  Run below command to verify monitoring agent deployment
+1. Run below command to verify monitoring agent deployment
 
-+++kubectl get ds ama-logs --namespace kube-system+++
+    `kubectl get ds ama-logs --namespace kube-system`
 
-![](./media/image18.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image18.png)
 
-5, Run below command to verify monitoring solution:
+    5, Run below command to verify monitoring solution:
 
-+++kubectl get deployment ama-logs-rs --namespace kube-system+++
+    `kubectl get deployment ama-logs-rs --namespace kube-system`
 
-![](./media/image19.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image19.png)
 
-\> \[!note\] Azure Linux with OS Guard is a preview feature and is
-scheduled for retirement. Organizations should evaluate Azure Container
-Linux (ACL) as the strategic platform for future AKS deployments.
+    >[!Note] Azure Linux with OS Guard is a preview feature and is scheduled for retirement. Organizations should evaluate Azure Container Linux (ACL) as the strategic platform for future AKS deployments.
+
 
 ## Summary
 
@@ -208,6 +182,4 @@ Reviewed security controls used to protect digital wallet workloads
 
 Evaluated migration planning from OS Guard to Azure Container Linux
 
-This demonstrates how regulated industries such as banking can harden
-Azure Linux environments while preparing for future adoption of Azure
-Container Linux.
+This demonstrates how regulated industries such as banking can harden Azure Linux environments while preparing for future adoption of Azure Container Linux.
