@@ -149,7 +149,7 @@ By the end of the lab, students will be able to:
 
 1. In the Git Bash terminal, Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native Tomcat package — double-check the version/URL against the current Apache archive, it drifts):
 
-    `curl -fsSL https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz%20-o%20/tmp/tomcat.tar.gz`
+    `curl -fL https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz -o /tmp/tomcat.tar.gz`
 
     `ls -lh /tmp/tomcat.tar.gz`
 
