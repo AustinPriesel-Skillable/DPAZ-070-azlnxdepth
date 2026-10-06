@@ -2,8 +2,7 @@
 
 ## Scenario
 
-Northwind Healthcare operates patient-facing applications that must
-satisfy regulatory auditing requirements.
+Northwind Healthcare operates patient-facing applications that must satisfy regulatory auditing requirements.
 
 Security and operations teams must prove that:
 
@@ -15,34 +14,26 @@ Application logs are retained
 
 Application incidents can be investigated
 
-The storefront VM deployed in Lab 1 will now represent a healthcare
-application server.
+The storefront VM deployed in Lab 1 will now represent a healthcare application server.
 
 The VM must be onboarded into Azure Monitor and Log Analytics.
 
-## Objective
+### Objective
 
-In this lab, students implement centralized monitoring for the Azure
-Linux storefront VM built in Lab 1 and audited in Lab 2.
+In this lab, students implement centralized monitoring for the Azure Linux storefront VM built in Lab 1 and audited in Lab 2.
 
 Students will:
-
 - Configure Azure Monitor integration.
-
 - Connect an Azure Linux VM to Log Analytics.
-
 - Verify Azure Monitor Agent installation.
-
 - Generate log activity on Azure Linux.
-
 - Validate log collection using KQL.
-
 - Demonstrate centralized operational visibility.
 
-## Task 1: Create a Log Analytics Workspace
 
-Log Analytics provides centralized storage and querying for collected
-logs.
+### Task 1: Create a Log Analytics Workspace
+
+Log Analytics provides centralized storage and querying for collected logs.
 
 Without centralization:
 
@@ -50,113 +41,102 @@ Logs remain on the individual VM
 
 With Log Analytics:
 
-1.  Open VS code new instance and run +++az login+++ and sign in with
-    cloud slice account
+1. Open VS code new instance and run `az login` and sign in with cloud slice account
 
-> ![](./media/image1.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image1.png)
 
-2.  Run below command to create workspace
+1. Run below command to create workspace
 
-> +++az monitor log-analytics workspace create --resource-group
-> ResourceGroup1 --workspace-name law-northwind-storefront --location
-> eastus+++
+    `az monitor log-analytics workspace create --resource-group ResourceGroup1 --workspace-name law-northwind-storefront --location eastus`
 
-![](./media/image2.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image2.png)
 
-![](./media/image3.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image3.png)
 
-## Task 2: Connect the Azure Linux VM to Azure Monitor
 
-The Azure Monitor Agent (AMA) collects telemetry from Azure Linux and
-forwards it to Log Analytics.
+### Task 2: Connect the Azure Linux VM to Azure Monitor
 
-1.  Open a browser and navigate to the Azure Linux VM - vm-storefront-01
+The Azure Monitor Agent (AMA) collects telemetry from Azure Linux and forwards it to Log Analytics.
 
-![](./media/image4.png)
+1. Open a browser and navigate to the Azure Linux VM - vm-storefront-01
 
-2.  Click on **Monitoring -\>Insights** from left navigation menu.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image4.png)
 
-![](./media/image5.png)
+1. Click on **Monitoring -\>Insights** from left navigation menu.
 
-3.  Switch back to VS code and run below command to install Azure
-    monitor agent.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image5.png)
 
-> +++az vm extension set --resource-group ResourceGroup1 --vm-name
-> vm-storefront-01 --publisher Microsoft.Azure.Monitor --name
-> AzureMonitorLinuxAgent+++
+1. Switch back to VS code and run below command to install Azure monitor agent.
 
-![](./media/image6.png)
+    `az vm extension set --resource-group ResourceGroup1 --vm-name vm-storefront-01 --publisher Microsoft.Azure.Monitor --name AzureMonitorLinuxAgent`
 
-![](./media/image7.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image6.png)
 
-4.  Run below command to verify installation.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image7.png)
 
-> +++az vm extension list --resource-group ResourceGroup1 --vm-name
-> vm-storefront-01 -o table+++
+1. Run below command to verify installation.
 
-![](./media/image8.png)
+    `az vm extension list --resource-group ResourceGroup1 --vm-name vm-storefront-01 -o table`
 
-## Task 3: Verify Existing Storefront Services
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image8.png)
 
-Before monitoring, confirm the workload deployed in Lab 1 is still
-operational.
 
-**1.**Run below command to connect to Azure Linux
+### Task 3: Verify Existing Storefront Services
 
-+++chmod 400 ~/Downloads/vmKey.pem+++
+Before monitoring, confirm the workload deployed in Lab 1 is still operational.
 
-**+++**ssh -i ~/Downloads/vmKey.pem azureuser@\<PUBLIC_IP\>+++
+1. Run below command to connect to Azure Linux
 
-![](./media/image9.png)
+    `chmod 400 ~/Downloads/vmKey.pem`
 
-2.  Run below command to verify Tomcat
+    `ssh -i ~/Downloads/vmKey.pem azureuser@{PUBLIC_IP}`
 
-+++ps -ef | grep tomcat+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image9.png)
 
-![](./media/image10.png)
+1. Run below command to verify Tomcat
 
-## Task 4: Generate Azure Linux Log Activity
+    `ps -ef | grep tomcat`
+
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image10.png)
+
+
+### Task 4: Generate Azure Linux Log Activity
 
 Monitoring requires log activity before it can be collected.
 
-**1.** Run below command to generate a test log entry.SSH to the Azure
-Linux VM and run:
+1. Run below command to generate a test log entry.SSH to the Azure Linux VM and run:
 
-+++logger "NORTHWIND-TEST: healthcare monitoring checkpoint $(date)"+++
+    `logger "NORTHWIND-TEST: healthcare monitoring checkpoint $(date)"`
 
-![](./media/image11.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image11.png)
 
-3.  Run below command to verify local log collection
+1. Run below command to verify local log collection
 
-> +++journalctl -n 10+++
+    `journalctl -n 10`
 
-![](./media/image12.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image12.png)
 
-## Task 5: Verify Centralized Log Collection
 
-1.  Switch back to Azure portal and open resource group and select Log
-    Analytics Workspace
+### Task 5: Verify Centralized Log Collection
 
-> ![](./media/image13.png)
+1. Switch back to Azure portal and open resource group and select Log Analytics Workspace
 
-2.  Click on Logs from left navigation.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image13.png)
 
-> ![](./media/image14.png)
+1. Click on Logs from left navigation.
 
-## Task 6: Investigate Storefront Service Logs
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image14.png)
 
-1.  Review SSH Activity
 
-+++journalctl -u sshd -n 20+++
+### Task 6: Investigate Storefront Service Logs
 
-> ![](./media/image15.png)
+1. Review SSH Activity
+
+    `journalctl -u sshd -n 20`
+
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab03/media/image15.png)
+
 
 ## Summary
 
-In this lab, you implemented centralized monitoring for an Azure Linux
-virtual machine by creating a Log Analytics workspace, installing and
-verifying the Azure Monitor Agent, generating test log activity, and
-reviewing collected logs. You also validated application and SSH service
-activity, demonstrating how Azure Monitor and Log Analytics provide
-centralized visibility, auditing, and operational monitoring for Linux
-workloads in a healthcare environment.
+In this lab, you implemented centralized monitoring for an Azure Linux virtual machine by creating a Log Analytics workspace, installing and verifying the Azure Monitor Agent, generating test log activity, and reviewing collected logs. You also validated application and SSH service activity, demonstrating how Azure Monitor and Log Analytics provide centralized visibility, auditing, and operational monitoring for Linux workloads in a healthcare environment.
