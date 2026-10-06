@@ -1,453 +1,398 @@
-# **Lab 1 — Provision and Publish an Azure Linux Storefront VM**
+# Lab 1 — Provision and Publish an Azure Linux Storefront VM
 
-## **Scenario:**
+## Scenario:
 
-You've just joined Northwind Retail as a cloud engineer. Their
-storefront currently runs on an aging, undocumented Ubuntu VM. Your
-manager wants a clean, reproducible way to stand up storefront VMs on
-Azure Linux instead. In this lab you provision one such VM by hand,
-install the runtime it needs, deploy Northwind's actual storefront
-application to it, and confirm the whole chain works end to end —
-exactly the process that gets automated away in Day 2's lab. This same
-VM carries forward into Labs 2 and 3 today.
+You've just joined Northwind Retail as a cloud engineer. Their storefront currently runs on an aging, undocumented Ubuntu VM. Your manager wants a clean, reproducible way to stand up storefront VMs on Azure Linux instead. In this lab you provision one such VM by hand, install the runtime it needs, deploy Northwind's actual storefront application to it, and confirm the whole chain works end to end — exactly the process that gets automated away in Day 2's lab. This same VM carries forward into Labs 2 and 3 today.
 
-## **Objective**
+### Objective
 
 By the end of the lab, students will be able to:
-
 - Provision an Azure Linux VM.
-
 - Connect to Azure Linux using SSH.
-
 - Install software using Azure Linux package management.
-
 - Deploy a Java web application to Tomcat.
-
 - Configure a MariaDB database.
-
 - Configure application connectivity using environment variables.
-
 - Publish an application through Azure networking.
-
 - Validate a running workload hosted on Azure Linux.
 
-### **Task 1 — Provision Azure Linux VM**
 
-1.  Open browser and navigate to +++<https://portal.azure.com>+++ and
-    sign in with Azure credentials.
+### Task 1 — Provision Azure Linux VM
 
-2.  Search for +++**Virtual Machines+++** and select it
+1. Open browser and navigate to +++https://portal.azure.com+++ and sign in with Azure credentials.
 
-![](./media/image1.png)
+1. Search for +++Virtual Machines+++ and select it
 
-3.  Click on Create and select **Virtual machine.**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image1.png)
 
-![](./media/image2.png)
+1. Click on Create and select **Virtual machine.**
 
-4.  Select below values
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image2.png)
 
-Resource group : **ResourceGroup1**
+1. Select below values
 
-Virtual machine name : +++**vm-storefront-01+++**
+    Resource group : **ResourceGroup1**
 
-Region: **East US**
+    Virtual machine name : `vm-storefront-01`
 
-Availability options : **No infrastructure redundancy required**
+    Region: **East US**
 
-Security type **: Standard**
+    Availability options : **No infrastructure redundancy required**
 
-![](./media/image3.png)
+    Security type: **Standard**
 
-5.  Scroll down ,in Image field click on **See all images** link
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image3.png)
 
-![](./media/image4.png)
+1. Scroll down in Image field click on **See all images** link
 
-6.  Search for +++**Azure Linux+++** and select **Azure Linux 4.0**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image4.png)
 
-![](./media/image5.png)
+1. Search for +++Azure Linux+++ and select **Azure Linux 4.0**
 
-7.  On Azure Linux tile, click on **Create** drop down and select
-    **Azure Linux 4.0- x64 Gen2**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image5.png)
 
-![](./media/image6.png)
+1. On Azure Linux tile, click on **Create** drop down and select **Azure Linux 4.0- x64 Gen2**
 
-8.  You will be navigated back to Create a virtual machine page with
-    Azure Linux 4.0 image selected .
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image6.png)
 
-![](./media/image7.png)
+1. You will be navigated back to Create a virtual machine page with Azure Linux 4.0 image selected .
 
-9.  Enter below values
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image7.png)
 
-Username :+++**azureuser+++**
+1. Enter below values
 
-SSH public key source: **Generate new key pair.**
+    Username :`azureuser`
 
-Key pair name: +++**vmKey+++**
+    SSH public key source: **Generate new key pair.**
 
-![](./media/image8.png)
+    Key pair name: `vmKey`
 
-10. Select inbound ports as HTTP(80) , SSH(22) and then click on
-    **Review + Create**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image8.png)
 
-> ![](./media/image9.png)
+1. Select inbound ports as HTTP(80) , SSH(22) and then click on **Review + Create**
 
-11. Review the details and click on **Create**.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image9.png)
 
-![](./media/image10.png)
+1. Review the details and click on **Create**.
 
-12. Click on **Download private key and create resource.**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image10.png)
 
-![](./media/image11.png)
+1. Click on **Download private key and create resource.**
 
-13. After the deployment successful, click on **Go to resource.**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image11.png)
 
-![](./media/image12.png)
+1. After the deployment successful, click on **Go to resource.**
 
-14. On the VM's **Overview** page, copy the **Public IP address**.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image12.png)
 
-![](./media/image13.png)
+1. On the VM's **Overview** page, copy the **Public IP address**.
 
-### **Task 2 – Configure Network Access**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image13.png)
 
-1.  Click on **Networking -\> Network settings** from left navigation
-    menu and click on **Create port rule-\> inbound port rule.**
 
-![](./media/image14.png)
+### Task 2 – Configure Network Access
 
-2.  Create an Inbound Security Rule with below values
+1. Click on **Networking -\> Network settings** from left navigation menu and click on **Create port rule-\> inbound port rule.**
 
-- Source: **Any**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image14.png)
 
-- Source Port Ranges: **\***
+1. Create an Inbound Security Rule with below values
 
-- Destination: **Any**
+    - Source: **Any**
+    - Source Port Ranges: **\***
+    - Destination: **Any**
+    - Service: **Custom**
+    - Destination Port Ranges: **8080**
+    - Protocol: **TCP**
+    - Action: **Allow**
+    - Priority: `900`
+    - Name: `Allow-Tomcat-8080`
+    - Select **Add**.
 
-- Service: **Custom**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image15.png)
 
-- Destination Port Ranges: **8080**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image16.png)
 
-- Protocol: **TCP**
 
-- Action: **Allow**
+### Task 3 – Connect to the Azure Linux VM
 
-- Priority: +++900+++
+1. Open Visual Studio code and navigate to **Terminal-\> New Terminal**
 
-- Name: +++**Allow-Tomcat-8080+++**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image17.png)
 
-- Select **Add**.
+1. Open **Git Bash** terminal
 
-![](./media/image15.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image18.png)
 
-![](./media/image16.png)
+1. **Set permissions on the SSH key.** For macOS or Linux:
 
-### **Task 3 – Connect to the Azure Linux VM**
+    `chmod 400 ~/Downloads/vmKey.pem`
 
-1.  Open Visual Studio code and navigate to **Terminal-\> New Terminal**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image19.png)
 
-![](./media/image17.png)
+1. **Connect to the VM. **Replace *{PUBLIC_IP}* with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
 
-2.  Open **Git Bash** terminal
+    `ssh -i ~/Downloads/vmKey.pem azureuser@{PUBLIC_IP}`
 
-![](./media/image18.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image20.png)
 
-3.  **Set permissions on the SSH key.** For macOS or Linux:
 
-+++chmod 400 ~/Downloads/vmKey.pem+++
+### Step 4 — Install Java 11, Tomcat 9, and a database server
 
-![](./media/image19.png)
+1. Install Java (verified Microsoft package):
 
-4.  **Connect to the VM.**Replace \<PUBLIC_IP\> with the public IP
-    address returned during VM creation. If prompted to trust the host,
-    type yes and press Enter.
+    `sudo tdnf update -y`
 
-+++ssh -i ~/Downloads/vmKey.pem azureuser@\<PUBLIC_IP\>+++
+    `sudo tdnf install -y java-25-openjdk tar gzip curl`
 
-![](./media/image20.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image21.png)
 
-### **Step 4 — Install Java 11, Tomcat 9, and a database server**
+1. Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native Tomcat package — double-check the version/URL against the current Apache archive, it drifts):
 
-1.  Install Java (verified Microsoft package):
+    `curl -fsSL https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz%20-o%20/tmp/tomcat.tar.gz`
 
-+++sudo tdnf update -y+++
+    `ls -lh /tmp/tomcat.tar.gz`
 
-+++sudo tdnf install -y java-25-openjdk tar gzip curl+++
+    `sudo mkdir -p /opt/tomcat`
 
-![](./media/image21.png)
+    `sudo tar xzf /tmp/tomcat.tar.gz -C /opt/tomcat --strip-components=1`
 
-2.  Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native
-    Tomcat package — double-check the version/URL against the current
-    Apache archive, it drifts):
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image22.png)
 
-+++curl -fsSL
-[https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz
--o
-/tmp/tomcat.tar.gz](https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz%20-o%20/tmp/tomcat.tar.gz)+++
+1. Verify tomcat insallation
 
-+++ls -lh /tmp/tomcat.tar.gz+++
+    `sudo ls /opt/tomcat/bin`
 
-+++sudo mkdir -p /opt/tomcat+++
+1. Find and install the database package yourself — deliberately not hardcoded, since the exact name can vary by Azure Linux version:
 
-+++sudo tar xzf /tmp/tomcat.tar.gz -C /opt/tomcat
---strip-components=1+++
+    `sudo tdnf install -y mariadb-server`
 
-![](./media/image22.png)
+    `sudo systemctl enable --now mariadb`
 
-3.  Verify tomcat insallation
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image23.png)
 
-+++sudo ls /opt/tomcat/bin+++
 
-4.  Find and install the database package yourself — deliberately not
-    hardcoded, since the exact name can vary by Azure Linux version:
+### Task 5 — Load sample data
 
-+++sudo tdnf install -y mariadb-server+++
+1. A small dataset — enough to prove the app works, not the full public "world" dataset:
 
-+++sudo systemctl enable --now mariadb+++
+    `sudo mysql -u root`
 
-![](./media/image23.png)
+    ```
+    CREATE DATABASE world;
+    USE world;
+    ```
 
-### **Task 5 — Load sample data**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image24.png)
 
-1.  A small dataset — enough to prove the app works, not the full public
-    "world" dataset:
 
-+++sudo mysql -u root+++
+    ```
+    CREATE TABLE country (
 
-\`\`\`
+    Code CHAR(3) NOT NULL PRIMARY KEY,
 
-CREATE DATABASE world;
+    Name CHAR(52) NOT NULL,
 
-USE world;
+    Continent CHAR(13) NOT NULL,
 
-\`\`\`
+    Region CHAR(26) NOT NULL,
 
-![](./media/image24.png)
+    SurfaceArea DECIMAL(10,2) NOT NULL DEFAULT 0.00,
 
-\`\`\`
+    IndepYear SMALLINT,
 
-CREATE TABLE country (
+    Population INT NOT NULL DEFAULT 0,
 
-Code CHAR(3) NOT NULL PRIMARY KEY,
+    LifeExpectancy DECIMAL(3,1),
 
-Name CHAR(52) NOT NULL,
+    GNP DECIMAL(10,2),
 
-Continent CHAR(13) NOT NULL,
+    GNPOld DECIMAL(10,2),
 
-Region CHAR(26) NOT NULL,
+    LocalName CHAR(45) NOT NULL,
 
-SurfaceArea DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    GovernmentForm CHAR(45) NOT NULL,
 
-IndepYear SMALLINT,
+    HeadOfState CHAR(60),
 
-Population INT NOT NULL DEFAULT 0,
+    Capital INT,
 
-LifeExpectancy DECIMAL(3,1),
+    Code2 CHAR(2) NOT NULL
 
-GNP DECIMAL(10,2),
+    );
 
-GNPOld DECIMAL(10,2),
+    ```
 
-LocalName CHAR(45) NOT NULL,
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image25.png)
 
-GovernmentForm CHAR(45) NOT NULL,
 
-HeadOfState CHAR(60),
+    ```
+    CREATE TABLE city (
 
-Capital INT,
+    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
-Code2 CHAR(2) NOT NULL
+    Name CHAR(35) NOT NULL,
 
-);
+    CountryCode CHAR(3) NOT NULL,
 
-\`\`\`
+    District CHAR(20) NOT NULL,
 
-![](./media/image25.png)
+    Population INT NOT NULL DEFAULT 0,
 
-\`\`\`
+    FOREIGN KEY (CountryCode) REFERENCES country(Code)
 
-CREATE TABLE city (
+    );
 
-ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ```
 
-Name CHAR(35) NOT NULL,
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image26.png)
 
-CountryCode CHAR(3) NOT NULL,
 
-District CHAR(20) NOT NULL,
+    ```
+    INSERT INTO country VALUES
 
-Population INT NOT NULL DEFAULT 0,
+    ('USA','United States','North America','North America',9363520.00,1776,331000000,78.5,21430000.00,20580000.00,'United States','Federal Republic','Joe Biden',NULL,'US'),
 
-FOREIGN KEY (CountryCode) REFERENCES country(Code)
+    ('IND','India','Asia','Southern Asia',3287263.00,1947,1380000000,69.7,2870000.00,2660000.00,'Bharat','Federal Republic','Droupadi Murmu',NULL,'IN');
 
-);
+    ```
 
-\`\`\`
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image27.png)
 
-![](./media/image26.png)
 
-\`\`\`
+    ```
+    INSERT INTO city (Name, CountryCode, District, Population) VALUES
 
-INSERT INTO country VALUES
+    ('New York','USA','New York',8419000),
 
-('USA','United States','North America','North
-America',9363520.00,1776,331000000,78.5,21430000.00,20580000.00,'United
-States','Federal Republic','Joe Biden',NULL,'US'),
+    ('Los Angeles','USA','California',3980000),
 
-('IND','India','Asia','Southern
-Asia',3287263.00,1947,1380000000,69.7,2870000.00,2660000.00,'Bharat','Federal
-Republic','Droupadi Murmu',NULL,'IN');
+    ('Mumbai','IND','Maharashtra',12442000),
 
-\`\`\`
+    ('Delhi','IND','Delhi',11034000);
 
-![](./media/image27.png)
+    ```
 
-\`\`\`
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image28.png)
 
-INSERT INTO city (Name, CountryCode, District, Population) VALUES
+1. Run the query `SELECT COUNT(*) FROM city;` and make sure it returns **4**.
 
-('New York','USA','New York',8419000),
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image29.png)
 
-('Los Angeles','USA','California',3980000),
 
-('Mumbai','IND','Maharashtra',12442000),
+### Task 6 — Build the WAR file locally (your own machine, not the VM)
 
-('Delhi','IND','Delhi',11034000);
+1. Open new GitBash instance in VS code and clone the repo in your local VM
 
-\`\`\`
+    `git clone https://github.com/yoshioterada/Java-WebApp-to-Tomcat-on-Azure-App-Service-Linux.git`
 
-> ![](./media/image28.png)
+    `cd Java-WebApp-to-Tomcat-on-Azure-App-Service-Linux/java-webapp-with-mysql`
 
-2.  Run the query +++SELECT COUNT(\*) FROM city; +++ and make sure it
-    returns 4
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image30.png)
 
-> ![](./media/image29.png)
+1. Open the cloned folder in VS code .Open pom.xml and replace maven-war-plugin Artifact version form 2.3 (@ line \#98) to +++3.4.0+++ and save the file.
 
-### **Task 6 — Build the WAR file locally (your own machine, not the VM)**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image31.png)
 
-1.  Open new GitBash instance in VS code and clone the repo in your
-    local VM
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image32.png)
 
-+++git clone
-https://github.com/yoshioterada/Java-WebApp-to-Tomcat-on-Azure-App-Service-Linux.git+++
+1. click on new Terminal-\> gitBash and run below command
 
-+++cd
-Java-WebApp-to-Tomcat-on-Azure-App-Service-Linux/java-webapp-with-mysql+++
+    `mvn clean package`
 
-![](./media/image30.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image33.png)
 
-2.  Open the cloned folder in VS code .Open pom.xml and replace
-    maven-war-plugin
+1. Run the command to check for war file
 
-> Artifact version form 2.3 (@ line \#98) to +++3.4.0+++ and save the
-> file.
+    `ls target/*.war`
 
-![](./media/image31.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image34.png)
 
-![](./media/image32.png)
+1. Update below command with Azure linux VM public id and run it to check target/azure-javaweb-app.war exists.
 
-3.  click on new Terminal-\> gitBash and run below command
+    `scp -i ~/Downloads/vmKey.pem target/azure-javaweb-app.war azureuser@{public-ip}:/tmp/`
 
-+++mvn clean package+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image35.png)
 
-![](./media/image33.png)
 
-4.  Run the command to check for war file
+### Step 7 — Deploy and configure the database connection
 
-+++ls target/\*.war+++
+1. Run below command to connect to Azure Linux.Update below command with PublicIP and run it
 
-![](./media/image34.png)
+    `ssh -i ~/Downloads/vmKey.pem azureuser@{public-ip}`
 
-5.  Update below command with Azure linux VM public id and run it to
-    check target/azure-javaweb-app.war exists.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image36.png)
 
-+++scp -i ~/Downloads/vmKey.pem target/azure-javaweb-app.war
-azureuser@\<public-ip\>:/tmp/+++
+1. Run below command to deploy WAR to Tomcat
 
-![](./media/image35.png)
+    `sudo cp /tmp/azure-javaweb-app.war /opt/tomcat/webapps/`
 
-### **Step 7 — Deploy and configure the database connection**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image37.png)
 
-1.  Run below command to connect to Azure Linux.Update below command
-    with PublicIP and run it
 
-+++ssh -i ~/Downloads/vmKey.pem azureuser@\<public-ip\>+++
+### Task 8- Configure the application database connection and start Tomcat
 
-![](./media/image36.png)
+1. Connect to db and create application db user
 
-2.  Run below command to deploy WAR to Tomcat
+    ```
+    sudo mysql -u root
 
-+++sudo cp /tmp/azure-javaweb-app.war /opt/tomcat/webapps/+++
+    CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'Pass@word123';
 
-![](./media/image37.png)
+    GRANT ALL PRIVILEGES ON world.* TO 'appuser'@'localhost';
 
-### **Task 8- Configure the application database connection and start Tomcat**
+    FLUSH PRIVILEGES;
 
-1.  Connect to db and create application db user
+    EXIT;
+    ```
 
-+++sudo mysql -u root+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image38.png)
 
-+++CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'Pass@word123';+++
+1. Run below command to verify if user exists.
 
-+++GRANT ALL PRIVILEGES ON world.\* TO 'appuser'@'localhost';+++
+    `sudo mysql -u root -e "SELECT User,Host FROM mysql.user;"`
 
-+++FLUSH PRIVILEGES;+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image39.png)
 
-+++EXIT;+++
+1. Create a the Tomcat environment configuration file named +++setenv.sh+++ in the Tomcat bin directory.
 
-![](./media/image38.png)
+    ```
+    sudo tee /opt/tomcat/bin/setenv.sh << 'EOF'
+    export JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
+    export
+    JDBC_URL="jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC"
+    export DB_USER="appuser"
+    export DB_PASSWORD="Pass@word123"
+    EOF
+    ```
 
-2.  Run below command to verify if user exists.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image40.png)
 
-+++sudo mysql -u root -e "SELECT User,Host FROM mysql.user;"+++
+1. Run below command to make the file executable.
 
-![](./media/image39.png)
+    `sudo chmod +x /opt/tomcat/bin/setenv.sh`
 
-3.  Create a the Tomcat environment configuration file named
-    **setenv.sh** in the Tomcat bin directory.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image41.png)
 
-> \`\`\`
->
-> sudo tee /opt/tomcat/bin/setenv.sh \<\< 'EOF'
->
-> export JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
->
-> export
-> JDBC_URL="jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC"
->
-> export DB_USER="appuser"
->
-> export DB_PASSWORD="Pass@word123"
->
-> EOF
->
-> \`\`\`
+1. Run the below command to start the Tomcat application server.
 
-![](./media/image40.png)
+    `sudo /opt/tomcat/bin/catalina.sh start`
 
-4.  Run below command to make the file executable.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image42.png)
 
-+++sudo chmod +x /opt/tomcat/bin/setenv.sh+++
+### Step 7 — Verify end-to-end
 
-> ![](./media/image41.png)
-
-5.  Run the below command to start the Tomcat application server.
-
-+++sudo /opt/tomcat/bin/catalina.sh start+++
-
-![](./media/image42.png)
-
-### **Step 7 — Verify end-to-end**
-
-1.  Verify Storefront application -update below command with Azure Linux
+1. Verify Storefront application -update below command with Azure Linux
     VM IP and run it in browser
 
-+++http://\<public-ip\>:8080/azure-javaweb-app/+++
+    `http://{public-ip}:8080/azure-javaweb-app/`
 
-> ![](./media/image43.png)
->
-> **\> \[!note\]s**the page loads, the left panel shows continents,
-> expanding North America shows United States, and selecting it lists
-> New York and Los Angeles on the right — the real assertion that VM,
-> runtime, Tomcat, MariaDB, and network all work together.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image43.png)
+    
+    >[!Note] The page loads, the left panel shows continents,
+    > expanding North America shows United States, and selecting it lists
+    > New York and Los Angeles on the right — the real assertion that VM,
+    > runtime, Tomcat, MariaDB, and network all work together.
 
 ### Summary:
 
