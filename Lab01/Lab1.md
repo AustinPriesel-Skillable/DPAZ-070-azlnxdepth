@@ -21,7 +21,7 @@ By the end of the lab, students will be able to:
 
 1. Open browser and navigate to +++https://portal.azure.com+++ and sign in with Azure credentials.
 
-1. Search for +++Virtual Machines+++ and select it
+1. Search for +++Virtual Machines+++ and select it.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image1.png)
 
@@ -41,29 +41,27 @@ By the end of the lab, students will be able to:
 
     Security type: **Standard**
 
-    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image3.png)
+    Image field: Select **See all images**, Search for +++Azure Linux+++, Select the drop down and choose **Azure Linux 4.0- x64 Gen2**. 
 
-1. Scroll down in Image field click on **See all images** link
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image3.png)
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image4.png)
 
-1. Search for +++Azure Linux+++ and select **Azure Linux 4.0**
-
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image5.png)
-
-1. On Azure Linux tile, click on **Create** drop down and select **Azure Linux 4.0- x64 Gen2**
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image6.png)
 
-1. You will be navigated back to Create a virtual machine page with Azure Linux 4.0 image selected .
+1. You will be navigated back to Create a virtual machine page with Azure Linux 4.0 image selected.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image7.png)
 
 1. Enter below values
 
-    Username :`azureuser`
+    Username: `azureuser`
 
     SSH public key source: **Generate new key pair.**
+
+    SSH Key Type: **Ed25519 SSH Format**
 
     Key pair name: `vmKey`
 
