@@ -2,414 +2,379 @@
 
 ## Scenario
 
-Northwind Logistics operates vehicle tracking services across multiple
-regional distribution centers.
+Northwind Logistics operates vehicle tracking services across multiple regional distribution centers.
 
 Each new region requires a fleet tracking server that provides:
-
 - Vehicle tracking
-
 - Fleet health monitoring
-
 - Dispatch operations
 
+
 Currently, administrators manually configure every server, resulting in:
-
 - Configuration drift
-
 - Inconsistent deployments
-
 - Increased administrative effort
 
-To standardize operations, Northwind Logistics will create a reusable
-Azure Linux image and deploy identical fleet-tracking servers across
-multiple locations.
 
-## Objectives
+To standardize operations, Northwind Logistics will create a reusable Azure Linux image and deploy identical fleet-tracking servers across multiple locations.
+
+### Objectives
 
 After completing this lab, you will be able to:
-
 - Deploy a fleet-tracking application on Azure Linux.
-
 - Create an Azure Compute Gallery.
-
 - Capture and publish Azure Linux images.
-
 - Create image versions.
-
 - Deploy Azure Linux virtual machines from Gallery images.
-
 - Implement a standardized deployment strategy.
+
 
 ## Exercise 1: Deploy a Fleet Tracking Dashboard
 
 ### Task 1: Create an Azure Linux Virtual Machine
 
-1.  Sign in to the Azure portal- +++<https://porta.azure.com>+++ and
-    sign in with your Azure credentials.
+1. Sign in to the Azure portal - +++https://portal.azure.com+++ and sign in with your Azure credentials.
 
-&nbsp;
+1. Select Virtual Machines tile .Select: **Create \> Virtual Machine**
 
-3.  Select Virtual Machines tile .Select: **Create \> Virtual Machine**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image1.png)
 
-> ![](./media/image1.png)
+1. Configure the VM using the following settings:
 
-4.  Configure the VM using the following settings:
+    - Resource Group:ResourceGroup1
+    - Virtual Machine Name: `fleettrackervm`
+    - Region: **@lab.CloudResourceGroup(ResourceGroup1).Location**
+    - Availability options : No infrastructure redundancy required
+    - Security type : Standard
+    - Image: see all images-search Azure Linux and select Azure Linux 
 
-- Resource Group:ResourceGroup1
+    - Authentication Type: Password
+    - Key pair name : `vmKey5`
 
-- Virtual Machine Name: +++**fleettrackervm+++**
+    - Select **Review + Create**.
 
-- Region: Japan East
 
-- Availability options : No infrastructure redundancy required
+1. Select **Create**.
 
-- Security type : Standard
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image2.png)
 
-- Image: see all images-search Azure Linux and select Azure Linux
-  4-select
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image3.png)
 
-- Authentication Type: Password
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image4.png)
 
-- Key pair name : +++**vmKey5+++**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image5.png)
 
-> Select **Review + Create**.
+1. Review the details and click on **Download private key and create resource.**
 
-5.  Select **Create**.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image6.png)
 
-![](./media/image2.png)
+1. Wait for deployment to be completed and then click on **Go to resource.**
 
-![](./media/image3.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image7.png)
 
-![](./media/image4.png)
+1. Copy Primary NIC public address to connect VM later in the lab.
 
-![](./media/image5.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image8.png)
 
-6.  Review the details and click on **Download private key and create
-    resource.**
+1. Open Visual Studio code form Desktop and open Terminal-\>Git Bash
 
-> ![](./media/image6.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image9.png)
 
-7.  Wait for deployment to be completed and then click on **Go to
-    resource.**
+1. **Set permissions on the SSH key.**
 
-![](./media/image7.png)
+    `chmod 400 ~/Downloads/vmKey5.pem`
 
-8.  Copy Primary NIC public address to connect VM later in the lab.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image10.png)
 
-![](./media/image8.png)
+1. Update below command with Azure Linux VM public IP and then run
 
-9.  Open Visual Studio code form Desktop and open Terminal-\>Git Bash
+    `ssh -i ~/Downloads/vmKey5.pem azureuser@{PUBLIC_IP}`
 
-![](./media/image9.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image11.png)
 
-10. **Set permissions on the SSH key.**
+1. Run below commands to install required packages on VM.
 
-+++chmod 400 ~/Downloads/vmKey5.pem+++
+    Update the VM:
 
-![](./media/image10.png)
+    ```
+    sudo tdnf update -y
 
-11. Update below command with Azure Linux VM public IP and then run
+    sudo tdnf install -y \
 
-+++ssh -i ~/Downloads/vmKey5.pem azureuser@\<PUBLIC_IP\>+++
+    python3 \
 
-![](./media/image11.png)
+    python3-pip \
 
-12. Run below commands to install required packages on VM.
+    git
+    ```
 
-Update the VM:
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image12.png)
 
-+++sudo tdnf update -y+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image13.png)
 
-\`\`\`
+1. Run below command to create app folder.
 
-sudo tdnf install -y \\
+    `mkdir fleet-tracker`
 
-python3 \\
+    `cd fleet-tracker`
 
-python3-pip \\
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image14.png)
 
-git
+1. Create the application file `vi app.py` and add the below code.
 
-\`\`\`
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image15.png) Add the below code. Save the file: **Esc :wq**
 
-![](./media/image12.png)
+    Press: Enter
 
-![](./media/image13.png)
+    ```
+    from flask import Flask
 
-13. Run below command to create app folder.
+    app = Flask(__name__)
 
-+++mkdir fleet-tracker+++
+    @app.route("/")
 
-+++cd fleet-tracker+++
+    def home():
 
-![](./media/image14.png)
+    return """
 
-14. Create the application file +++vi app.py+++ and add the below code.
+    <h1>Northwind Logistics Fleet Dashboard</h1>
 
-![](./media/image15.png) Add the below code .Save the file:Esc+:wq
-,Press: Enter
+    <h3>Active Vehicles</h3>
 
-\`\`\`
+    <ul>
 
-from flask import Flask
+    <li>Truck-101 : Bengaluru</li>
 
-app = Flask(\_\_name\_\_)
+    <li>Truck-205 : Chennai</li>
 
-@app.route("/")
+    <li>Truck-307 : Hyderabad</li>
 
-def home():
+    <li>Truck-410 : Pune</li>
 
-return """
+    </ul>
 
-\<h1\>Northwind Logistics Fleet Dashboard\</h1\>
+    <p>Status : Operational</p>
 
-\<h3\>Active Vehicles\</h3\>
+    """
 
-\<ul\>
+    app.run(host="0.0.0.0", port=5000)
+    ```
 
-\<li\>Truck-101 : Bengaluru\</li\>
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image16.png)
 
-\<li\>Truck-205 : Chennai\</li\>
+1. **Run below command to** Install Flask:
 
-\<li\>Truck-307 : Hyderabad\</li\>
+    `pip3 install --user flask`
 
-\<li\>Truck-410 : Pune\</li\>
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image17.png)
 
-\</ul\>
+1. Start the Fleet Tracking Application.Run- **python3 app.py**
 
-\<p\>Status : Operational\</p\>
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image18.png) 10. Leave the application running.
 
-"""
-
-app.run(host="0.0.0.0", port=5000)
-
-\`\`\`
-
-![](./media/image16.png)
-
-15. **Run below command to** Install Flask:
-
-+++pip3 install --user flask+++
-
-![](./media/image17.png)
-
-16. Start the Fleet Tracking Application.Run- **python3 app.py**
-
-![](./media/image18.png) 10. Leave the application running.
 
 ### Task 7: Configure Network Access
 
-1.  Return to Azure Portal. Navigate to fleettrackervm-\>Networking
-    -\>Network Settings.
+1. Return to Azure Portal. Navigate to fleettrackervm-\>Networking -\>Network Settings.
 
-![](./media/image19.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image19.png)
 
-2.  Select **Create port rule -\>Inbound port rule** and configure:
+1. Select **Create port rule -\>Inbound port rule** and configure:
 
-Destination Port Ranges:+++5000+++
+    Destination Port Ranges: `5000`
 
-Protocol:TCP
+    Protocol: TCP
 
-Action:Allow
+    Action: Allow
 
-Select:Add
+    Select: Add
 
-![](./media/image20.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image20.png)
 
-![](./media/image21.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image21.png)
 
-![](./media/image22.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image22.png)
 
-17. Open a browser.Navigate to:
+1. Open a browser.Navigate to:
 
-+++http://\<public-ip\>:5000+++
+    `http://{public-ip}:5000`
 
-![](./media/image23.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image23.png)
+
 
 ## Exercise 2: Create an Azure Compute Gallery
 
 ### Task 1: Create a Gallery
 
-1.  Search for +++**Azure Compute Gallery+++ and s**elect it.
+1. Search for +++Azure Compute Gallery+++ and select it.
 
-![](./media/image24.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image24.png)
 
-2.  Select **Create**
+1. Select **Create**
 
-![](./media/image25.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image25.png)
 
-3.  Configure with below details and click on **Review + Create.**
+1. Configure with below details and click on **Review + Create.**
 
-Gallery Name: +++**fleetGallery+++**
+    Gallery Name: `fleetGallery`
 
-Subscription: Current Subscription
+    Subscription: Current Subscription
 
-Resource Group: ResourceGroup1
+    Resource Group: ResourceGroup1
 
-Region: Japan East
+    Region: @lab.CloudResourceGroup(ResourceGroup1).Location
 
-![](./media/image26.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image26.png)
 
-4.  Once validation passed ,click **Create**.
+1. Once validation passed, select **Create**.
 
-![](./media/image27.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image27.png)
 
-![](./media/image28.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image28.png)
+
 
 ## Exercise 3: Create a Golden Fleet Tracking Image
 
-1.  Return to the SSH session. Stop the application: Ctrl + C
+1. Return to the SSH session. Stop the application: Ctrl + C
 
-![](./media/image29.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image29.png)
 
-2.  Navigate to fleettrackervm -\> Overview and select **Stop** and wait
-    until the VM status shows:
+1. Navigate to fleettrackervm -\> Overview and select **Stop** and wait until the VM status shows:
 
-![](./media/image30.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image30.png)
 
-![](./media/image31.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image31.png)
 
-3.  Navigate to fleettrackervm . click on Capture and select Image
+1. Navigate to fleettrackervm. click on Capture and select Image
 
-![](./media/image32.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image32.png)
 
-4.  Select Target Azure compute gallery : **fleetGallery**
+1. Select Target Azure compute gallery : **fleetGallery**
 
-> ![](./media/image33.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image33.png)
 
-5.  Click on **Create** under **Target VM image definition** field
+1. Click on **Create** under **Target VM image definition** field
 
-![](./media/image34.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image34.png)
 
-6.  Create an Image Definition with below details and click on OK.
+1. Create an Image Definition with below details and click on OK.
 
-Image Definition Name: +**++leet-tracking-image+++**
+    Image Definition Name: +++leet-tracking-image+++
 
-Publisher: +++**Northwind+++**
+    Publisher: `Northwind`
 
-Offer: +++**FleetTracking+++**
+    Offer: `FleetTracking`
 
-SKU:+++ v1+++
+    SKU: `v1`
 
-![](./media/image35.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image35.png)
 
-7.  Create image version with Version: **1.0.0** and then click on
-    **Review + create.**
+1. Create image version with Version: **1.0.0** and then click on **Review + create.**
 
-![](./media/image36.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image36.png)
 
-8.  Once the validation passed, click on **Create**
+1. Once the validation passed, click on **Create**
 
-> ![](./media/image37.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image37.png)
 
-9.  Wait for image creation to be completed.
+1. Wait for image creation to be completed.
 
-![](./media/image38.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image38.png)
 
-![](./media/image39.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image39.png)
 
-10. Click on **Go to resource.**
+1. Click on **Go to resource.**
 
-![](./media/image40.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image40.png)
+
 
 ## Exercise 4: Deploy a Regional Fleet Tracking Server
 
-Northwind Logistics is opening a new regional dispatch center. Instead
-of rebuilding a VM manually, administrators will use the image.
+Northwind Logistics is opening a new regional dispatch center. Instead of rebuilding a VM manually, administrators will use the image.
 
-1.  Click on **Crete VM**
+1. Click on **Crete VM**
 
-![](./media/image41.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image41.png)
 
-2.  Configure VM with below details and then click on Review + Create
+1. Configure VM with below details and then click on Review + Create
 
-- Resource Group : **ResoruceGroup1**
+    - Resource Group : **ResoruceGroup1**
+    - Virtual Machine Name: `fleettracker-east`
+    - Region: @lab.CloudResourceGroup(ResourceGroup1).Location
+    - Image : **leet-tracking-image**
+    - Key paid name : `eastkey`
+    - Select inbound ports: 80, 22
 
-- Virtual Machine Name: +++**fleettracker-east+++**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image42.png)
 
-- Region:Japan East
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image43.png)
 
-- Image : image you had created earlier
 
-- Key paid name : +++eastkey+++
+1. After the validation passed, click on **Create**.
 
-- Select inbound ports: 80,22
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image44.png)
 
-![](./media/image42.png)
+1. Click on Download private key and create resource.
 
-![](./media/image43.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image44.png)
 
-3.  After the validation passed, click on **Create**.
+1. Wait for the deployment to complete. Click on **Go to resource.**
 
-![](./media/image44.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image45.png)
 
-4.  Click on Download private key and create resource.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image46.png)
 
-![](./media/image44.png)
+1. Copy IP address
 
-5.  Wait for the deployment to complete. Click on **Go to resource.**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image47.png)
 
-![](./media/image45.png)
+1. Click on **Network-\> Networking Settings -\> Create port tule- \> inbound port rule**.
 
-![](./media/image46.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image48.png)
 
-6.  Copy IP address
+1. Configure rule with below details and click **Add**
 
-> ![](./media/image47.png)
+    - Destination port range : `5000`
+    - Protocol: TCP
+    - Name : `eastfleettrack`
 
-7.  Click on **Network-\> Networking Settings -\> Create port tule- \>
-    inbound port rule**.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image49.png)
 
-![](./media/image48.png)
 
-8.  Configure rule with below details and click **Add**
+1. Switch back to VS code and run below commands to connect to the above vm. **Set permissions on the SSH key.** For macOS or Linux:
 
-- Destination port range : +++5000+++
+    `chmod 400 ~/Downloads/eastKey.pem`
 
-- Protocol :TCP
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image50.png)
 
-- Name : +++eastfleettrack+++
+1. **Connect to the VM.**Replace *{PUBLIC_IP}* with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
 
-![](./media/image49.png)
+    `ssh -i ~/Downloads/eastkey.pem azureuser@{PUBLIC_IP}`
 
-9.  Switch back to VS code and run below commands to connect to the
-    above vm. **Set permissions on the SSH key.** For macOS or Linux:
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image51.png)
 
-+++chmod 400 ~/Downloads/eastKey.pem+++
+1. Run ls to verify application files are available.
 
-![](./media/image50.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image52.png)
 
-10. **Connect to the VM.**Replace \<PUBLIC_IP\> with the public IP
-    address returned during VM creation. If prompted to trust the host,
-    type yes and press Enter.
+1. Navigate to fleet-tracker and check if app.py file is available
 
-+++ssh -i ~/Downloads/eastkey.pem azureuser@\<PUBLIC_IP\>+++
+    `cd fleet-tracker`
 
-![](./media/image51.png)
+    `ls`
 
-11. Run ls to verify application files are available.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image53.png)
 
-![](./media/image52.png)
+1. Run below command to start the application.
 
-12. Navigate to fleet-tracker and check if app.py file is available
+    `python3 app.py`
 
-+++cd fleet-tracker+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image54.png)
 
-+++ ls+++
+1. Browse to: +++http://{regional-vm-ip}:5000+++. Should see Northwind Logistics Fleet Dashboard
 
-![](./media/image53.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image55.png)
 
-13. Run below command to start the application.
-
-+++python3 app.py+++
-
-![](./media/image54.png)
-
-14. Browse to: +++http://\<regional-vm-ip\>:5000+++ .should see
-    Northwind Logistics Fleet Dashboard
-
-![](./media/image55.png)
 
 ## Exercise 5: Deploy a Disaster Recovery Fleet Tracking Server (Optional)
 
@@ -417,65 +382,48 @@ Northwind Logistics requires a backup server for business continuity.
 
 ### Task 1: Deploy Another VM
 
-1.  Repeat the previous deployment using: fleet-tracking-image
+1. Repeat the previous deployment using: fleet-tracking-image
 
-- Version 1.0.0
+    - Version 1.0.0
+    - Configure:
+    - Virtual Machine Name:`fleettracker-dr`
+    - Deploy the VM.
 
-- Configure:
 
-- Virtual Machine Name:+++**fleettracker-dr+++**
+1. **Connect to the DR Server**
 
-- Deploy the VM.
+    - Connect via SSH.
+    - Verify Azure Linux. Run `cat /etc/os-release`
+    - Start Fleet Dashboard.
+    - `cd fleet-tracker`
+    - `python3 app.py`
 
-  1.  **Connect to the DR Server**
+1. Open +++http://{dr-vm-ip}:5000+++
 
-&nbsp;
+1. Compare the following:
 
-- Connect via SSH.
+    - fleettrackervm
+    - fleettracker-east
+    - fleettracker-dr
 
-  - Verify Azure Linux.Run cat /etc/os-release
+1. Verify all servers display: Northwind Logistics Fleet Dashboard
 
-  - Start Fleet Dashboard .Run
+1. Verify operating system consistency.Run on each VM:
 
-  - cd fleet-tracker
+    `cat /etc/os-release`
 
-  - python3 app.py
-
-  1.  Open +++http://\<dr-vm-ip\>:5000+++
-
-  2.  Compare the following:
-
-&nbsp;
-
-- fleettrackervm
-
-- fleettracker-east
-
-- fleettracker-dr
-
-  1.  Verify all servers display:Northwind Logistics Fleet Dashboard
-
-18. Verify operating system consistency.Run on each VM:
-
-+++cat /etc/os-release+++
 
 ## Summary
 
 In this lab, you:
-
 - Deployed a fleet tracking application on Azure Linux.
-
 - Created an Azure Compute Gallery.
-
 - Created an image definition and image version.
-
 - Captured a reusable Azure Linux image.
-
 - Deployed regional and disaster recovery fleet-tracking servers from
   the same image.
 
 - Validated standardized deployments across multiple servers.
 
-This demonstrates how Azure Linux image lifecycle management helps
-logistics organizations deploy consistent, repeatable infrastructure
-across multiple operational environments.
+
+This demonstrates how Azure Linux image lifecycle management helps logistics organizations deploy consistent, repeatable infrastructure across multiple operational environments.
