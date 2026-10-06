@@ -5,251 +5,215 @@
 Northwind Bank is modernizing its payment processing platform.
 
 The development team wants to:
-
 - Build a payment API.
-
 - Package the API as a container image.
-
 - Store the image in Azure Container Registry.
-
 - Deploy the application onto an Azure Container Linux (ACL) based AKS
   cluster.
 
 - Enable monitoring and validate secure operations.
 
-## Objectives
+
+### Objectives
 
 After completing this lab, you will be able to:
-
 - Create and configure an Azure Linux development environment.
-
 - Develop and test a secure payment processing API using Python and
   Flask.
 
 - Containerize an application using Docker.
-
 - Build and manage container images.
-
 - Create and configure Azure Container Registry (ACR).
-
 - Push container images to Azure Container Registry.
-
 - Deploy and validate an Azure Container Linux (ACL) based AKS cluster.
-
 - Deploy containerized workloads to Azure Kubernetes Service (AKS).
-
 - Publish applications using Kubernetes Services.
-
 - Enable monitoring and validate secure operations in an Azure Container
   Linux environment.
+
 
 ## Exercise 1: Create an Azure Linux Development VM
 
 ### Task 1: Create Azure Linux VM
 
-1.  Opena browser and enter +++<https://portal.azure.com>+++ and sign in
-    with your Azure credentials.
+1. Opena browser and enter +++https://portal.azure.com+++ and sign in with your Azure credentials.
 
-2.  Search for +++Virtual Machines+++ and select it.
+1. Search for +++Virtual Machines+++ and select it.
 
-![](./media/image1.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image1.png)
 
-3.  Select **Create → Azure Virtual Machine**
+1. Select **Create → Azure Virtual Machine**
 
-> ![](./media/image2.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image2.png)
 
-4.  Enter below details and create VM.
+1. Enter below details and create VM.
 
-- Resource Group: ResourceGroup1
+    - Resource Group: ResourceGroup1
+    - Virtual Machine Name: `bankdevvm`
+    - Region: @lab.CloudResourceGroup(ResourceGroup1).Location
+    - Availability options : **No infrastructure redundancy required.**
+    - Security Type : Standard
+    - Image: **See all image-\> Search `Azure Linux` and select Azure Linux
+    - Create Key pair
+    - Key Pair name : `myKey`
+    - **Review + Create**
 
-- Virtual Machine Name: +++**bankdevvm+++**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image3.png)
 
-- Region: **Japan East**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image4.png)
 
-- Availability options : **No infrastructure redundancy required.**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image5.png)
 
-- Security Type : Standard
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image6.png)
 
-- Image: **See all image-\> Search Azure Linux and select Azure Linux
-  4.- create**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image7.png)
 
-- Key Pair name : +++**myKey+++**
 
-- **Review + Create**
+1. After the validation passed, click on **Create**.
 
-![](./media/image3.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image8.png)
 
-![](./media/image4.png)
+1. Click on **Download private key and create resource.**
 
-![](./media/image5.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image9.png)
 
-![](./media/image6.png)
+1. Wait for the deployment to complete and then click on **Go to resource.**
 
-![](./media/image7.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image10.png)
 
-5.  After the validation passed, click on **Create**.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image11.png)
 
-![](./media/image8.png)
+1. Copy Primary **NIC public IP address** and save it in notepad to connect to VM.
 
-6.  Click on **Download private key and create resource.**
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image12.png)
 
-![](./media/image9.png)
-
-7.  Wait for the deployment to complete and then click on **Go to
-    resource.**
-
-![](./media/image10.png)
-
-![](./media/image11.png)
-
-8.  Copy Primary **NIC public IP address** and save it in notepad to
-    connect to VM.
-
-> ![](./media/image12.png)
 
 ### Task 2: Connect to VM
 
-1.  Open **VS code -\> Terminal**
+1. Open **VS code -\> Terminal**
 
-![](./media/image13.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image13.png)
 
-2.  Open **Git Bash** terminal
+1. Open **Git Bash** terminal
 
-> ![](./media/image14.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image14.png)
 
-3.  **Set permissions on the SSH key.** For macOS or Linux:
+1. **Set permissions on the SSH key.** For macOS or Linux:
 
-+++chmod 400 ~/Downloads/myKey.pem+++
+    `chmod 400 ~/Downloads/myKey.pem`
 
-![](./media/image15.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image15.png)
 
-4.  **Connect to the VM.**Replace \<PUBLIC_IP\> with the public IP
-    address returned during VM creation. If prompted to trust the host,
-    type yes and press Enter.
+1. **Connect to the VM.**Replace {PUBLIC_IP} with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
 
-+++ssh -i ~/Downloads/myKey.pem azureuser@\<PUBLIC_IP\>+++
+    `ssh -i ~/Downloads/myKey.pem azureuser@{PUBLIC_IP}`
 
-![](./media/image16.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image16.png)
 
-## Task 3: Install Development Tools
 
-1.  Run below command to update packages.
+### Task 3: Install Development Tools
 
-+++sudo tdnf update -y Install Python and pip:+++
+1. Run below command to update packages.
 
-+++sudo tdnf install -y python3 python3-pip git+++
+    `sudo tdnf update -y Install Python and pip`
 
-![](./media/image17.png)
+    `sudo tdnf install -y python3 python3-pip git`
 
-![](./media/image18.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image17.png)
 
-2.  Run below command to verify python versions in Azure Linux VM.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image18.png)
 
-+++python3 --version+++
+1. Run below command to verify python versions in Azure Linux VM.
 
-+++pip3 --version+++
+    `python3 --version`
 
-![](./media/image19.png)
+    `pip3 --version`
+
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image19.png)
+
 
 ## Exercise 2: Create Secure Payment API
 
 ### Task 1: Create Application
 
-1.  Open new instance of GitBash and run below command to create folder.
+1. Open new instance of GitBash and run below command to create folder.
 
-**+++mkdir payment-api+++**
+    `mkdir payment-api`
 
-**+++cd payment-api+++**
+    `cd payment-api`
 
-+++pwd+++
+    `pwd`
 
-![](./media/image20.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image20.png)
 
-2.  Click on File- \> Open Folder and open the **payment-api folder**
+1. Click on File- \> Open Folder and open the **payment-api folder**
 
-![](./media/image21.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image21.png)
 
-3.  Create app.py . copy the below code and save the file
+1. Create app.py . copy the below code and save the file
 
-> \`\`\`
->
-> from flask import Flask, jsonify
->
-> app = Flask(\_\_name\_\_)
->
-> @app.route("/")
->
-> def home():
->
-> return "Northwind Bank Secure Payment API"
->
-> @app.route("/payment")
->
-> def payment():
->
-> return jsonify({
->
-> "transactionId": "TXN10001",
->
-> "cardNumber": "\*\*\*\*1234",
->
-> "merchant": "Northwind Retail",
->
-> "amount": "5000",
->
-> "currency": "INR",
->
-> "status": "Approved"
->
-> })
->
-> app.run(host="0.0.0.0", port=5000)
->
-> \`\`\`
+    ```
+    from flask import Flask, jsonify
+    app = Flask(__name__)
+    @app.route("/")
+    def home():
+    return "Northwind Bank Secure Payment API"
+    @app.route("/payment")
+    def payment():
+    return jsonify({
+    "transactionId": "TXN10001",
+    "cardNumber": "****1234",
+    "merchant": "Northwind Retail",
+    "amount": "5000",
+    "currency": "INR",
+    "status": "Approved"
+    })
+    app.run(host="0.0.0.0", port=5000)
+    ```
 
-![](./media/image22.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image22.png)
 
-![](./media/image23.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image23.png)
 
-## Task 3: Install Flask and run the application
+### Task 3: Install Flask and run the application
 
-1.  Open New Terminal and select Git Bash
+1. Open New Terminal and select Git Bash
 
-![](./media/image24.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image24.png)
 
-2.  Run below command
+1. Run below command
 
-+++pip3 install --user flask+++
+    `pip3 install --user flask`
 
-+++python -m pip show flask+++
+    `python -m pip show flask`
 
-+++python3 app.py+++
+    `python3 app.py`
 
-![](./media/image25.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image25.png)
 
-![](./media/image26.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image26.png)
 
-3.  Click on the app link
+1. Click on the app link
 
-![](./media/image27.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image27.png)
 
-4.  App open in browser.
+1. App open in browser.
 
-![](./media/image28.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image28.png)
 
-![](./media/image29.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image29.png)
 
-## Task 5: Validate Payment Endpoint
+### Task 5: Validate Payment Endpoint
 
-1.  Open new instance second SSH session and run blow curl command.
+1. Open new instance second SSH session and run blow curl command.
 
-+++curl <http://localhost:5000/payment>+++
+    `curl <http://localhost:5000/payment>`
 
-![](./media/image30.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image30.png)
 
-2.  Switch back first instance stop application: Ctrl+C
+1. Switch back first instance stop application: Ctrl+C
 
-![](./media/image31.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image31.png)
 
 ## Exercise 3: Containerize the Payment API
 
@@ -257,348 +221,328 @@ Build this portion on the machine where Docker is available.
 
 ### Task 1: Create Dockerfile ,Requirements File
 
-1.  Run below command to create requirements file
+1. Run below command to create requirements file
 
-> +++echo "flask" \> requirements.txt+++
+    `echo "flask" > requirements.txt`
 
-+++cat requirements.txt+++
+    `cat requirements.txt`
 
-![](./media/image32.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image32.png)
 
-2.  Create dockerfile +++ vi Dockerfile+++ and add the below code
+1. Create dockerfile `vi Dockerfile` and add the below code
 
-\`\`\`
+    ```
+    FROM python:3.12-slim
 
-FROM python:3.12-slim
+    WORKDIR /app
 
-WORKDIR /app
+    COPY requirements.txt .
 
-COPY requirements.txt .
+    RUN pip install -r requirements.txt
 
-RUN pip install -r requirements.txt
+    COPY app.py .
 
-COPY app.py .
+    EXPOSE 5000
 
-EXPOSE 5000
+    CMD ["python","app.py"]
+    ```
 
-CMD \["python","app.py"\]
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image33.png)
 
-\`\`\`
+1. Press Esc, `:wq` to save the file.
 
-![](./media/image33.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image34.png)![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image35.png)  
 
-3.  Press Esc, +++:wq+++ to save the file.
+### Task 4: Build Container Image
 
-![](./media/image34.png)![](./media/image35.png)  
-Task 4: Build Container Image
+1. Double click on the Docker icon from desktop.
 
-1.  Double click on the Docker icon from desktop.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image36.png)
 
-![](./media/image36.png)
+1. Click on **Accept**.
 
-2.  Click on **Accept**.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image37.png)
 
-![](./media/image37.png)
+1. Click on skip.
 
-3.  Click on skip.
+1. Click on **Skip** on Welcome to Docker page.
 
-4.  Click on **Skip** on Welcome to Docker page.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image38.png)
 
-![](./media/image38.png)
+1. Make sure the Docker is running.
 
-5.  Make sure the Docker is running.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image39.png)
 
-![](./media/image39.png)
+1. Switch back to Vs code. Run below command to build container image
 
-6.  Switch back to Vs code. Run below command to build container image
+    `docker build -t payment-api:v1 .`
 
-> +++docker build -t payment-api:v1 .+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image40.png)
 
-![](./media/image40.png)
-
-![](./media/image41.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image41.png)
 
 ### Task 5: Verify Image
 
-1.  Run below command to check
+1. Run below command to check
 
-+++docker images+++
+    `docker images`
 
-![](./media/image42.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image42.png)
 
 ### Task 6: Run Container
 
-1.  Run below command to run the container.
+1. Run below command to run the container.
 
-+++docker run -d -p 5000:5000 payment-api:v1+++
+    `docker run -d -p 5000:5000 payment-api:v1`
 
-![](./media/image43.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image43.png)
 
 ### Task 7: Validate Container
 
-1.  Run below command to check the app.
+1. Run below command to check the app.
 
-+++curl <http://localhost:5000/payment>+++
+    `curl <http://localhost:5000/payment>`
 
-![](./media/image44.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image44.png)
 
 ## Exercise 4: Create Azure Container Registry
 
 ### Task 1: Create Container Registry
 
-1.  Switch back Azure portal and open Cloud shell.
+1. Switch back Azure portal and open Cloud shell.
 
-![](./media/image45.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image45.png)
 
-2.  Select **Bash**.
+1. Select **Bash**.
 
-![](./media/image46.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image46.png)
 
-3.  Select subscription and click on **Apply**.
+1. Select subscription and click on **Apply**.
 
-![](./media/image47.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image47.png)
 
-4.  Run below command set environment variable
+1. Run below command set environment variable
 
-\`\`\`
+    ```
+    export RESOURCE_GROUP=ResourceGroup1
 
-export RESOURCE_GROUP=ResourceGroup1
+    export ACR_NAME=bankacr12345
 
-export ACR_NAME=bankacr12345
+    export ACR_NAME="bankacr12345"
+    ```
 
-export ACR_NAME="bankacr12345"
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image48.png)
 
-\`\`\`
+1. Run below command to create container registry.
 
-![](./media/image48.png)
+    `az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Basic`
 
-5.  Run below command to create container registry.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image49.png)
 
-+++az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku
-Basic+++
+1. Run below command to enable administrator.
 
-![](./media/image49.png)
+    `az acr update --name $ACR_NAME --admin-enabled true`
 
-6.  Run below command to enable administrator.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image50.png)
 
-+++az acr update --name $ACR_NAME --admin-enabled true+++
+1. Run below command to retrieve registry credentials
 
-![](./media/image50.png)
+    `az acr show --name $ACR_NAME --query loginServer -o tsv`
 
-7.  Run below command to retrieve registry credentials
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image51.png)
 
-> +++az acr show --name $ACR_NAME --query loginServer -o tsv+++
+1. Run below command to get acr user name and password
 
-![](./media/image51.png)
+    `az acr credential show --name $ACR_NAME --query username -o tsv`
 
-8.  Run below command to get acr user name and password
+    `az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv`
 
-> +++az acr credential show --name $ACR_NAME --query username -o tsv+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image52.png)
 
-+++az acr credential show --name $ACR_NAME --query passwords\[0\].value
--o tsv+++
+    >[!Note] Do not run az acr login in Azure Cloud Shell. Cloud Shell doesn't support the Docker daemon. Use Cloud Shell only to obtain registry credentials and perform the Docker login from the Skillable VM where Docker is installed.
 
-![](./media/image52.png)
-
-**\> \[!note\]**Do not run az acr login in Azure Cloud Shell. Cloud
-Shell doesn't support the Docker daemon. Use Cloud Shell only to obtain
-registry credentials and perform the Docker login from the Skillable VM
-where Docker is installed.
-
-9.  Switch back to Visual Studio code .Replace \<\<ACR_NAME\>\> with the
+1. Switch back to Visual Studio code .Replace \*{*{ACR_NAME}*}* with the
     acr name retrieved from above command and run it. Enter username and
     password when
 
-+++az acr login --name \<\<ACR_NAME\>\>+++
+    `az acr login --name {ACR_NAME}`
 
-![](./media/image53.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image53.png)
 
-![](./media/image54.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image54.png)
 
 ## Exercise 5: Push Application Image into ACR
 
 ### Task 1: Retrieve Login Server
 
-1.  Run below command to tage the image
+1. Run below command to tage the image
 
-> +++docker tag payment-api:v1 bankacr12345.azurecr.io/payment-api:v1+++
+    `docker tag payment-api:v1 bankacr12345.azurecr.io/payment-api:v1`
 
-![](./media/image55.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image55.png)
 
-2.  **Run below command to push the image**
+1. **Run below command to push the image**
 
-+++docker push bankacr12345.azurecr.io/payment-api:v1+++
+    `docker push bankacr12345.azurecr.io/payment-api:v1`
 
-![](./media/image56.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image56.png)
 
-![](./media/image57.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image57.png)
 
 ## Exercise 6: Create Azure Container Linux AKS Cluster
 
-1.  Run below command to create ACL cluster.
+1. Run below command to create ACL cluster.
 
-\`\`\`
+    ```
+    export CLUSTER_NAME=bankaclcluster
 
-export CLUSTER_NAME=bankaclcluster
+    export RESOURCE_GROUP=ResourceGroup1
+    ```
 
-export RESOURCE_GROUP=ResourceGroup1
+    `az login`
 
-\`\`\`
+    `az aks create --resource-group $RESOURCE_GROUP --name bankaclcluster --os-sku AzureLinux --node-count 3 --generate-ssh-keys`
 
-+++az login+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image58.png)
 
-+++az aks create --resource-group $RESOURCE_GROUP --name bankaclcluster
---os-sku AzureLinux --node-count 3 --generate-ssh-keys+++
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image59.png)
 
-![](./media/image58.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image60.png)
 
-![](./media/image59.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image61.png)
 
-![](./media/image60.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image62.png)
 
-![](./media/image61.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image63.png)
 
-![](./media/image62.png)
-
-![](./media/image63.png)
-
-![](./media/image64.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image64.png)
 
 ## Exercise 7: Connect and Validate Azure Linux Nodes
 
-### Task 1 :Validate ACL nodes
+### Task 1: Validate ACL nodes
 
-1.  Run below command to get acl credentials
+1. Run below command to get acl credentials
 
-> +++az aks get-credentials --resource-group $RESOURCE_GROUP --name
-> bankaclcluster+++
+    `az aks get-credentials --resource-group $RESOURCE_GROUP --name bankaclcluster`
 
-![](./media/image65.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image65.png)
 
-2.  Run below command to get nodes. Review node information.
+1. Run below command to get nodes. Review node information.
 
-+++kubectl get nodes -o wide+++
+    `kubectl get nodes -o wide`
 
-![](./media/image66.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image66.png)
 
-7.  Run below command to validate node pool OS
+1. Run below command to validate node pool OS
 
-> +++az aks nodepool list --resource-group $RESOURCE_GROUP
-> --cluster-name bankaclcluster --query
-> "\[\].{Pool:name,OS:osSku,Image:nodeImageVersion}" -o table+++
+    `az aks nodepool list --resource-group $RESOURCE_GROUP --cluster-name bankaclcluster --query "[].{Pool:name,OS:osSku,Image:nodeImageVersion}" -o table`
 
-![](./media/image67.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image67.png)
 
 ## Exercise 8: Add Azure Container Linux Node Pool
 
-### Task 1 : Add node pool
+### Task 1: Add node pool
 
-1.  **Run below command to add nodepool**
+1. **Run below command to add nodepool**
 
-> +++az aks nodepool add --resource-group $RESOURCE_GROUP --cluster-name
-> bankaclcluster --name securepool --node-count 3 --os-sku AzureLinux+++
+    `az aks nodepool add --resource-group $RESOURCE_GROUP --cluster-name bankaclcluster --name securepool --node-count 3 --os-sku AzureLinux`
 
-![](./media/image68.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image68.png)
 
-## **Exercise 9: Deploy Payment Application**
+## Exercise 9: Deploy Payment Application
 
 ### Task 1: Attach Registry
 
-1.  Run below command to get acr name
+1. Run below command to get acr name
 
-+++az acr repository list --name $ACR_NAME --output table+++
+    `az acr repository list --name $ACR_NAME --output table`
 
-![](./media/image69.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image69.png)
 
-2.  Run below command attach acr (Require owner role)
+1. Run below command attach acr (Require owner role)
 
-+++$ az aks update --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
--attach-acr $ACR_NAME+++
+    `$ az aks update --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME -attach-acr $ACR_NAME`
 
-![](./media/image70.png)
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image70.png)
 
 ### Task 2: Create Deployment Manifest
 
-1.  Create a file +++**payment-deployment.yaml+++** and add the below
+1. Create a file `payment-deployment.yaml` and add the below
     code. Update image name as appropriate.
 
-\`\`\`
+    ```
+    apiVersion: apps/v1
 
-apiVersion: apps/v1
+    kind: Deployment
 
-kind: Deployment
+    metadata:
 
-metadata:
+    name: payment-api
 
-name: payment-api
+    spec:
 
-spec:
+    replicas: 3
 
-replicas: 3
+    selector:
 
-selector:
+    matchLabels:
 
-matchLabels:
+    app: payment-api
 
-app: payment-api
+    template:
 
-template:
+    metadata:
 
-metadata:
+    labels:
 
-labels:
+    app: payment-api
 
-app: payment-api
+    spec:
 
-spec:
+    containers:
 
-containers:
+    - name: payment-api
 
-\- name: payment-api
+    image: bankacr12345.azurecr.io/payment-api:v1
 
-image: bankacr12345.azurecr.io/payment-api:v1
+    ports:
 
-ports:
+    - containerPort: 5000
+    ```
 
-\- containerPort: 5000
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image71.png)
 
-\`\`\`
+1. Run below command to deploy.
 
-![](./media/image71.png)
+    `kubectl apply -f payment-deployment.yaml`
 
-2.  Run below command to deploy.
+1. Run below command to verify pods status
 
-+++kubectl apply -f payment-deployment.yaml+++
-
-3.  Run below command to verify pods status
-
-+++kubectl get pods+++
+    `kubectl get pods`
 
 ## Exercise 10: Publish and Monitor the Secure Payment Platform
 
-1.  Run the command to expose the service
+1. Run the command to expose the service
 
-+++kubectl expose deployment payment-api --port=80 --target-port=5000
---type=LoadBalancer+++
+    `kubectl expose deployment payment-api --port=80 --target-port=5000 --type=LoadBalancer`
 
-2.  Run below command t retrieve service.Wait until EXTERNAL_IP appears
+1. Run below command t retrieve service.Wait until EXTERNAL_IP appears
 
-+++kubectl get svc+++
+    `kubectl get svc`
 
-3.  Update the url and run it in browser -http://\<external-ip\>/payment
+1. Update the url and run it in browser -http://*{external-ip}*/payment
 
-4.  **Run below command to e**nable monitoring:
+1. **Run below command to e**nable monitoring:
 
-+++az aks enable-addons --addons monitoring --resource-group
-$RESOURCE_GROUP --name $CLUSTER_NAME+++
+    `az aks enable-addons --addons monitoring --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME`
 
-5.  Run below command to verify monitoring agent:
+1. Run below command to verify monitoring agent:
 
-+++kubectl get ds ama-logs -n kube-system+++
+    `kubectl get ds ama-logs -n kube-system`
 
-6.  Verify monitoring deployment:
+1. Verify monitoring deployment:
 
-+++kubectl get deployment ama-logs-rs -n kube-system+++
+    `kubectl get deployment ama-logs-rs -n kube-system`
 
 ## Summary
 
