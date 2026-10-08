@@ -40,7 +40,7 @@ After completing this lab, you will be able to:
     - Region: @lab.CloudResourceGroup(ResourceGroup1).Location
     - Availability options : No infrastructure redundancy required
     - Security type : Standard
-    - Image : See all images-\> Search Azure linux -\> Select Azure linux
+    - Image : See all images-\> `Search Azure linux` -\> Select Azure linux
 
     - Key pair name : `manufacturingvm_key`
     - **Review+ Create**
