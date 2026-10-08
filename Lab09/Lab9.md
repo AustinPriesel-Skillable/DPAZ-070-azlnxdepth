@@ -25,7 +25,7 @@ After completing this lab, you will be able to:
 
 ## Exercise 1: Manage Packages Using DNF5
 
-1. Open a browser and go to **https:\\portal.azure.com** and sign in with your Azure credentials. Select virtual machines tile on the home page.
+1. Open a browser and go to +++portal.azure.com+++ and sign in with your Azure credentials. Select virtual machines tile on the home page.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab09/media/image1.png)
 
