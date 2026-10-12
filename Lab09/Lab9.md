@@ -3,7 +3,7 @@
 ## Scenario
 
 Northwind Manufacturing manages factory-control systems running on Azure Linux.
-
+ 
 Before a Linux image is approved for factory deployment, administrators must:
 - Apply system updates.
 - Validate repositories.
