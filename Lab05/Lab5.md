@@ -290,7 +290,9 @@ Northwind Logistics is opening a new regional dispatch center. Instead of rebuil
     - Resource Group : **ResoruceGroup1**
     - Virtual Machine Name: `fleettracker-east`
     - Region: @lab.CloudResourceGroup(ResourceGroup1).Location
-    - Image : **leet-tracking-image**
+    - Availability options: **No Infrastructure Redundancy required**
+    - Security: Standard
+    - Image: **fleet-tracking-image**, **1.0.0 - x64 Gen 2**
     - Key paid name : `eastkey`
     - Select inbound ports: 80, 22
 
