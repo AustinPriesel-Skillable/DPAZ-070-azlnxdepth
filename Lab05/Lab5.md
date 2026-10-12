@@ -35,18 +35,18 @@ After completing this lab, you will be able to:
 
 1. Sign in to the Azure portal - +++https://portal.azure.com+++ and sign in with your Azure credentials.
 
-1. Select Virtual Machines tile .Select: **Create \> Virtual Machine**
+1. Select Virtual Machines tile. Select: **Create \> Virtual Machine**
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image1.png)
 
 1. Configure the VM using the following settings:
 
-    - Resource Group:ResourceGroup1
+    - Resource Group: **@lab.CloudResourceGroup(ResourceGroup1).Name**
     - Virtual Machine Name: `fleettrackervm`
     - Region: **@lab.CloudResourceGroup(ResourceGroup1).Location**
     - Availability options : No infrastructure redundancy required
     - Security type : Standard
-    - Image: see all images-search Azure Linux and select Azure Linux 
+    - Image: see all images - search `Azure Linux` and select Azure Linux 
 
     - Authentication Type: Password
     - Key pair name : `vmKey5`
@@ -96,17 +96,13 @@ After completing this lab, you will be able to:
 
     Update the VM:
 
-    ```
-    sudo tdnf update -y
+    `sudo tdnf update -y`
 
-    sudo tdnf install -y \
+    `sudo tdnf install -y python3`
 
-    python3 \
+    `sudo tdnf install -y python3-pip` 
 
-    python3-pip \
-
-    git
-    ```
+    `sudo tdnf install -y git`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image12.png)
 
@@ -128,36 +124,25 @@ After completing this lab, you will be able to:
 
     ```
     from flask import Flask
-
+    
     app = Flask(__name__)
-
+    
     @app.route("/")
-
     def home():
-
-    return """
-
-    <h1>Northwind Logistics Fleet Dashboard</h1>
-
-    <h3>Active Vehicles</h3>
-
-    <ul>
-
-    <li>Truck-101 : Bengaluru</li>
-
-    <li>Truck-205 : Chennai</li>
-
-    <li>Truck-307 : Hyderabad</li>
-
-    <li>Truck-410 : Pune</li>
-
-    </ul>
-
-    <p>Status : Operational</p>
-
-    """
-
-    app.run(host="0.0.0.0", port=5000)
+        return """
+        <h1>Northwind Logistics Fleet Dashboard</h1>
+        <h3>Active Vehicles</h3>
+        <ul>
+            <li>Truck-101 : Bengaluru</li>
+            <li>Truck-205 : Chennai</li>
+            <li>Truck-307 : Hyderabad</li>
+            <li>Truck-410 : Pune</li>
+        </ul>
+        <p>Status : Operational</p>
+        """
+    
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)
     ```
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image16.png)
@@ -168,24 +153,28 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image17.png)
 
-1. Start the Fleet Tracking Application.Run- **python3 app.py**
+1. Start the Fleet Tracking Application. Run - `python3 app.py`
 
-    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image18.png) 10. Leave the application running.
+    ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image18.png)
+
+1. Leave the application running.
 
 
 ### Task 7: Configure Network Access
 
-1. Return to Azure Portal. Navigate to fleettrackervm-\>Networking -\>Network Settings.
+1. Return to Azure Portal. Navigate to fleettrackervm -\> Networking -\> Network Settings.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image19.png)
 
-1. Select **Create port rule -\>Inbound port rule** and configure:
+1. Select **Create port rule -\> Inbound port rule** and configure:
 
     Destination Port Ranges: `5000`
 
     Protocol: TCP
 
     Action: Allow
+
+    Name: `lab5inbound`
 
     Select: Add
 
@@ -195,7 +184,7 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image22.png)
 
-1. Open a browser.Navigate to:
+1. Open a browser. Navigate to:
 
     `http://{public-ip}:5000`
 
