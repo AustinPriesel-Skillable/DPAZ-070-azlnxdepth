@@ -122,42 +122,30 @@ After completing this lab, you will be able to:
 
     ```
     apiVersion: apps/v1
-
     kind: Deployment
 
     metadata:
-
-    name: media-analyzer
-
-    spec:
-
-    replicas: 3
-
-    selector:
-
-    matchLabels:
-
-    app: media-analyzer
-
-    template:
-
-    metadata:
-
-    labels:
-
-    app: media-analyzer
+      name: media-analyzer
 
     spec:
+      replicas: 3
 
-    containers:
+      selector:
+        matchLabels:
+          app: media-analyzer
 
-    - name: media-analyzer
+      template:
+        metadata:
+          labels:
+            app: media-analyzer
 
-    image: nginx
+        spec:
+          containers:
+          - name: media-analyzer
+            image: nginx
 
-    ports:
-
-    - containerPort: 80
+            ports:
+            - containerPort: 80
 
     ```
 
