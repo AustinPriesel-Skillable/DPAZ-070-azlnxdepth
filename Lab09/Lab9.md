@@ -40,7 +40,7 @@ After completing this lab, you will be able to:
     - Region: @lab.CloudResourceGroup(ResourceGroup1).Location
     - Availability options : No infrastructure redundancy required
     - Security type : Standard
-    - Image : See all images-\> `Search Azure linux` -\> Select Azure linux
+    - Image : See all images-\> Search `Azure linux` -\> Select Azure linux
 
     - Key pair name : `manufacturingvm_key`
     - **Review+ Create**
@@ -78,9 +78,9 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab09/media/image11.png)
 
-1. **Connect to the VM.**Replace *{PUBLIC_IP}* with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
+1. **Connect to the VM. **Replace *{PUBLIC_IP}* with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
 
-    `ssh -i ~/Downloads/manufacturingvm_key azureuser@{PUBLIC_IP}`
+    ` ssh -i ~/Downloads/manufacturingvm_key.pem azureuser@{PUBLIC_IP}`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab09/media/image12.png)
 
@@ -169,7 +169,7 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab09/media/image26.png)
 
-1. Review system messages.Press Ctrl + C after review to stop the log messages.
+1. Review system messages. Press Ctrl + C after review to stop the log messages.
 
     `sudo tail -f /var/log/messages`
 
