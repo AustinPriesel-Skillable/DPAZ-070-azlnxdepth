@@ -52,10 +52,10 @@ After completing this lab, you will be able to:
     - Virtual Machine Name: `bankdevvm`
     - Region: @lab.CloudResourceGroup(ResourceGroup1).Location
     - Availability options : **No infrastructure redundancy required.**
-    - Security Type : Standard
-    - Image: **See all image-\> Search `Azure Linux` and select Azure Linux
+    - Security Type: Standard
+    - Image: **See all image** -\> Search `Azure Linux` and select Azure Linux
     - Create Key pair
-    - Key Pair name : `myKey`
+    - Key Pair name: `myKey`
     - **Review + Create**
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image3.png)
@@ -104,7 +104,7 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image15.png)
 
-1. **Connect to the VM.**Replace {PUBLIC_IP} with the public IP address returned during VM creation. If prompted to trust the host, type yes and press Enter.
+1. **Connect to the VM.** Replace *{PUBLIC_IP}* with the public IP address returned during VM creation. If prompted to trust the host, type `yes` and press Enter.
 
     `ssh -i ~/Downloads/myKey.pem azureuser@{PUBLIC_IP}`
 
@@ -115,7 +115,7 @@ After completing this lab, you will be able to:
 
 1. Run below command to update packages.
 
-    `sudo tdnf update -y Install Python and pip`
+    `sudo tdnf install -y python3 python3-pip`
 
     `sudo tdnf install -y python3 python3-pip git`
 
@@ -146,11 +146,11 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image20.png)
 
-1. Click on File- \> Open Folder and open the **payment-api folder**
+1. in Visual Studio Code, Click on File- \> Open Folder and open the **payment-api folder**. Enable the checkbox **trust the authors**, select **yes, i trust the authors**.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image21.png)
 
-1. Create app.py . copy the below code and save the file
+1. Select **file**, **New File**, **Python file**. Create **app.py**. copy the below code and save the file.
 
     ```
     from flask import Flask, jsonify
@@ -183,7 +183,7 @@ After completing this lab, you will be able to:
 
 1. Run below command
 
-    `pip3 install --user flask`
+    `python3 -m pip install flask`
 
     `python -m pip show flask`
 
@@ -207,7 +207,7 @@ After completing this lab, you will be able to:
 
 1. Open new instance second SSH session and run blow curl command.
 
-    `curl <http://localhost:5000/payment>`
+    `curl http://localhost:5000/payment`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image30.png)
 
@@ -301,7 +301,7 @@ Build this portion on the machine where Docker is available.
 
 1. Run below command to check the app.
 
-    `curl <http://localhost:5000/payment>`
+    `curl http://localhost:5000/payment`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image44.png)
 
@@ -361,11 +361,11 @@ Build this portion on the machine where Docker is available.
 
     >[!Note] Do not run az acr login in Azure Cloud Shell. Cloud Shell doesn't support the Docker daemon. Use Cloud Shell only to obtain registry credentials and perform the Docker login from the Skillable VM where Docker is installed.
 
-1. Switch back to Visual Studio code .Replace \*{*{ACR_NAME}*}* with the
+1. Switch back to Visual Studio code. Replace *{{ACR_NAME}}* with the
     acr name retrieved from above command and run it. Enter username and
     password when
 
-    `az acr login --name {ACR_NAME}`
+    `docker login --name {ACR_NAME}`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image53.png)
 
@@ -455,13 +455,15 @@ Build this portion on the machine where Docker is available.
 
 1. Run below command to get acr name
 
+    `export ACR_NAME=bankacr12345`
+   
     `az acr repository list --name $ACR_NAME --output table`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image69.png)
 
 1. Run below command attach acr (Require owner role)
 
-    `$ az aks update --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME -attach-acr $ACR_NAME`
+    `az aks update --resource-group "$RESOURCE_GROUP" --name "$CLUSTER_NAME" --attach-acr "$ACR_NAME"`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image70.png)
 
@@ -472,42 +474,24 @@ Build this portion on the machine where Docker is available.
 
     ```
     apiVersion: apps/v1
-
     kind: Deployment
-
     metadata:
-
-    name: payment-api
-
+      name: payment-api
     spec:
-
-    replicas: 3
-
-    selector:
-
-    matchLabels:
-
-    app: payment-api
-
-    template:
-
-    metadata:
-
-    labels:
-
-    app: payment-api
-
-    spec:
-
-    containers:
-
-    - name: payment-api
-
-    image: bankacr12345.azurecr.io/payment-api:v1
-
-    ports:
-
-    - containerPort: 5000
+      replicas: 3
+      selector:
+        matchLabels:
+          app: payment-api
+      template:
+        metadata:
+          labels:
+            app: payment-api
+        spec:
+          containers:
+            - name: payment-api
+              image: bankacr12345.azurecr.io/payment-api:v1
+              ports:
+                - containerPort: 5000
     ```
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image71.png)
@@ -532,7 +516,7 @@ Build this portion on the machine where Docker is available.
 
 1. Update the url and run it in browser -http://*{external-ip}*/payment
 
-1. **Run below command to e**nable monitoring:
+1. Run below command to enable monitoring:
 
     `az aks enable-addons --addons monitoring --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME`
 
