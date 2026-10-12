@@ -1,8 +1,8 @@
-# Lab 1 — Provision and Publish an Azure Linux Storefront VM
+# Lab 1 - Provision and Publish an Azure Linux Storefront VM
 
 ## Scenario:
 
-You've just joined Northwind Retail as a cloud engineer. Their storefront currently runs on an aging, undocumented Ubuntu VM. Your manager wants a clean, reproducible way to stand up storefront VMs on Azure Linux instead. In this lab you provision one such VM by hand, install the runtime it needs, deploy Northwind's actual storefront application to it, and confirm the whole chain works end to end — exactly the process that gets automated away in Day 2's lab. This same VM carries forward into Labs 2 and 3 today.
+You've just joined Northwind Retail as a cloud engineer. Their storefront currently runs on an aging, undocumented Ubuntu VM. Your manager wants a clean, reproducible way to stand up storefront VMs on Azure Linux instead. In this lab you provision one such VM by hand, install the runtime it needs, deploy Northwind's actual storefront application to it, and confirm the whole chain works end to end - exactly the process that gets automated away in Day 2's lab. This same VM carries forward into Labs 2 and 3 today.
 
 ### Objective
 
@@ -17,7 +17,7 @@ By the end of the lab, students will be able to:
 - Validate a running workload hosted on Azure Linux.
 
 
-### Task 1 — Provision Azure Linux VM
+### Task 1 - Provision Azure Linux VM
 
 1. Open browser and navigate to +++https://portal.azure.com+++ and sign in with Azure credentials.
 
@@ -88,7 +88,7 @@ By the end of the lab, students will be able to:
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image13.png)
 
 
-### Task 2 – Configure Network Access
+### Task 2 - Configure Network Access
 
 1. Click on **Networking -\> Network settings** from left navigation menu and click on **Create port rule-\> inbound port rule.**
 
@@ -112,7 +112,7 @@ By the end of the lab, students will be able to:
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image16.png)
 
 
-### Task 3 – Connect to the Azure Linux VM
+### Task 3 - Connect to the Azure Linux VM
 
 1. From the desktop, Open Visual Studio code and navigate to **Terminal-\> New Terminal**
 
@@ -137,7 +137,7 @@ By the end of the lab, students will be able to:
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image20.png)
 
 
-### Step 4 — Install Java 11, Tomcat 9, and a database server
+### Step 4 - Install Java 11, Tomcat 9, and a database server
 
 1. Install Java (verified Microsoft package):
 
@@ -147,7 +147,7 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image21.png)
 
-1. In the Git Bash terminal, Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native Tomcat package — double-check the version/URL against the current Apache archive, it drifts):
+1. In the Git Bash terminal, Install Tomcat 9 as a tarball (Azure Linux doesn't ship a native Tomcat package - double-check the version/URL against the current Apache archive, it drifts):
 
     `curl -fL https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.90/bin/apache-tomcat-9.0.90.tar.gz -o /tmp/tomcat.tar.gz`
 
@@ -163,7 +163,7 @@ By the end of the lab, students will be able to:
 
     `sudo ls /opt/tomcat/bin`
 
-1. Find and install the database package yourself — deliberately not hardcoded, since the exact name can vary by Azure Linux version:
+1. Find and install the database package yourself - deliberately not hardcoded, since the exact name can vary by Azure Linux version:
 
     `sudo tdnf install -y mariadb-server`
 
@@ -172,9 +172,9 @@ By the end of the lab, students will be able to:
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image23.png)
 
 
-### Task 5 — Load sample data
+### Task 5 - Load sample data
 
-1. A small dataset — enough to prove the app works, not the full public "world" dataset:
+1. A small dataset - enough to prove the app works, not the full public "world" dataset:
 
     `sudo mysql -u root`
 
@@ -280,7 +280,7 @@ By the end of the lab, students will be able to:
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image29.png)
 
 
-### Task 6 — Build the WAR file locally (your own machine, not the VM)
+### Task 6 - Build the WAR file locally (your own machine, not the VM)
 
 1. Open new GitBash instance in VS code and clone the repo in your local VM
 
@@ -317,7 +317,7 @@ By the end of the lab, students will be able to:
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image35.png)
 
 
-### Step 7 — Deploy and configure the database connection
+### Step 7 - Deploy and configure the database connection
 
 1. Run below command to connect to Azure Linux.Update below command with PublicIP and run it
 
@@ -356,13 +356,12 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image39.png)
 
-1. Create a the Tomcat environment configuration file named +++setenv.sh+++ in the Tomcat bin directory.
+1. Create the Tomcat environment configuration file named +++setenv.sh+++ in the Tomcat bin directory.
 
     ```
-    sudo tee /opt/tomcat/bin/setenv.sh << 'EOF'
+    sudo tee /opt/tomcat/bin/setenv.sh > /dev/null << 'EOF'
     export JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
-    export
-    JDBC_URL="jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC"
+    export JDBC_URL="jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC"
     export DB_USER="appuser"
     export DB_PASSWORD="Pass@word123"
     EOF
@@ -382,7 +381,7 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image42.png)
 
-### Step 7 — Verify end-to-end
+### Step 7 - Verify end-to-end
 
 1. Verify Storefront application -update below command with Azure Linux
     VM IP and run it in browser
@@ -393,7 +392,7 @@ By the end of the lab, students will be able to:
     
     >[!Note] The page loads, the left panel shows continents,
     > expanding North America shows United States, and selecting it lists
-    > New York and Los Angeles on the right — the real assertion that VM,
+    > New York and Los Angeles on the right - the real assertion that VM,
     > runtime, Tomcat, MariaDB, and network all work together.
 
 ### Summary:
