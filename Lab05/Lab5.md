@@ -384,7 +384,8 @@ Northwind Logistics requires a backup server for business continuity.
 1. **Connect to the DR Server**
 
     - Connect via SSH.
-    - Verify Azure Linux. Run `cat /etc/os-release`
+    - Verify Azure Linux.
+          - Run `cat /etc/os-release`
     - Start Fleet Dashboard.
     - `cd fleet-tracker`
     - `python3 app.py`
@@ -399,7 +400,7 @@ Northwind Logistics requires a backup server for business continuity.
 
 1. Verify all servers display: Northwind Logistics Fleet Dashboard
 
-1. Verify operating system consistency.Run on each VM:
+1. Verify operating system consistency. Run on each VM:
 
     `cat /etc/os-release`
 
