@@ -344,7 +344,7 @@ Northwind Logistics is opening a new regional dispatch center. Instead of rebuil
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image51.png)
 
-1. Run ls to verify application files are available.
+1. Run `ls` to verify application files are available.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab05/media/image52.png)
 
