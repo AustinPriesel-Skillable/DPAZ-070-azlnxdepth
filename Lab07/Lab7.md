@@ -143,6 +143,10 @@ After completing this lab, you will be able to:
 
     `az provider register --namespace Microsoft.OperationalInsights`
 
+1. Run the following command due to the ***aks-preview*** commands features being altered. Remove the extension prior to the next step.
+
+    `az extension remove --name aks-preview`
+
 1. Run below command to enable monitoring:
 
     `az aks enable-addons --addons monitoring --name $CLUSTER_NAME --resource-group $RESOURCE_GROUP`
