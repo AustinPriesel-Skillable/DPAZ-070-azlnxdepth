@@ -150,25 +150,30 @@ After completing this lab, you will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image21.png)
 
-1. Select **file**, **New File**, **Python file**. Create **app.py**. copy the below code and save the file.
+1. Select **file**, **New File**, **Python file**. Copy the below code and save the file as `app.py`.
 
     ```
     from flask import Flask, jsonify
+    
     app = Flask(__name__)
+    
     @app.route("/")
     def home():
-    return "Northwind Bank Secure Payment API"
+        return "Northwind Bank Secure Payment API"
+    
     @app.route("/payment")
     def payment():
-    return jsonify({
-    "transactionId": "TXN10001",
-    "cardNumber": "****1234",
-    "merchant": "Northwind Retail",
-    "amount": "5000",
-    "currency": "INR",
-    "status": "Approved"
-    })
-    app.run(host="0.0.0.0", port=5000)
+        return jsonify({
+            "transactionId": "TXN10001",
+            "cardNumber": "****1234",
+            "merchant": "Northwind Retail",
+            "amount": "5000",
+            "currency": "INR",
+            "status": "Approved"
+        })
+    
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)
     ```
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image22.png)
