@@ -67,7 +67,7 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image8.png)
 
-1. Select inbound ports as HTTP(80) , SSH(22) and then click on **Review + Create**
+1. Select inbound ports as **HTTP(80)**, **SSH(22)** and then click on **Review + Create**
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image9.png)
 
