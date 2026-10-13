@@ -194,6 +194,8 @@ After completing this lab, you will be able to:
 
     `python3 app.py`
 
+   >[!Alert] If there is an error running the *python3 app.py* command, open the Command Palette (Ctrl+Shift+P), run Python: Select Interpreter, and choose Python 3.11.
+
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image25.png)
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image26.png)
@@ -370,7 +372,7 @@ Build this portion on the machine where Docker is available.
     acr name retrieved from above command and run it. Enter username and
     password when
 
-    `docker login --name {ACR_NAME}`
+    `docker login {ACR_NAME.azurecr.io}`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image53.png)
 
