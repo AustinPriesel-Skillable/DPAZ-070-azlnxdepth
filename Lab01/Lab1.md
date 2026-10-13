@@ -300,6 +300,8 @@ By the end of the lab, students will be able to:
 
 1. click on new Terminal-\> gitBash and run below command
 
+    `cd java-webapp-with-mysql/`
+
     `mvn clean package`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image33.png)
