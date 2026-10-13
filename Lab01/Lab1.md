@@ -21,7 +21,7 @@ By the end of the lab, students will be able to:
 
 1. Open browser and navigate to +++https://portal.azure.com+++ and sign in with Azure credentials.
 
-1. Search for +++Virtual Machines+++ and select it.
+1. Search for `Virtual Machines` and select it.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image1.png)
 
@@ -41,7 +41,7 @@ By the end of the lab, students will be able to:
 
     Security type: **Standard**
 
-    Image field: Select **See all images**, Search for +++Azure Linux+++, Select the drop down and choose **Azure Linux 4.0- x64 Gen2**. 
+    Image field: Select **See all images**, Search for `Azure Linux`, Select the drop down and choose **Azure Linux 4.0- x64 Gen2**. 
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image3.png)
 
@@ -100,7 +100,7 @@ By the end of the lab, students will be able to:
     - Source Port Ranges: **\***
     - Destination: **Any**
     - Service: **Custom**
-    - Destination Port Ranges: **8080**
+    - Destination Port Ranges: `8080`
     - Protocol: **TCP**
     - Action: **Allow**
     - Priority: `900`
