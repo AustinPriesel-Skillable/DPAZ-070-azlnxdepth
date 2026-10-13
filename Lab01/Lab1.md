@@ -290,7 +290,7 @@ By the end of the lab, students will be able to:
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image30.png)
 
-1. Open the cloned folder in VS code. Open pom.xml in the **second java-webapp-with-mysql** directory and replace maven-war-plugin Artifact version form 2.3 (@ line \#98) to +++3.4.0+++ and save the file.
+1. Open the cloned folder in VS code. Open pom.xml in the **second java-webapp-with-mysql** directory and replace maven-war-plugin Artifact version form 2.3 (@ line \#98) to `3.4.0` and save the file.
 
     >[!Knowledge] The folder can Located at the following path: *"C:\Users\Admin\Java-WebApp-to-Tomcat-on-Azure-App-Service-Linux"*
 
@@ -336,17 +336,17 @@ By the end of the lab, students will be able to:
 
 1. Connect to db and create application db user
 
-    ```
-    sudo mysql -u root
+    
+    `sudo mysql -u root`
 
-    CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'Pass@word123';
+    `CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'Pass@word123';`
 
-    GRANT ALL PRIVILEGES ON world.* TO 'appuser'@'localhost';
+    `GRANT ALL PRIVILEGES ON world.* TO 'appuser'@'localhost';`
 
-    FLUSH PRIVILEGES;
+    `FLUSH PRIVILEGES;`
 
-    EXIT;
-    ```
+   ` EXIT;`
+
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image38.png)
 
