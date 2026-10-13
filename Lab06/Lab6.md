@@ -340,6 +340,11 @@ Build this portion on the machine where Docker is available.
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab06/media/image48.png)
 
+1. Run `az login` and select Work/School account. Use your cloud slice credentials to login, inside the pop up window. 
+
+    - username: +++@lab.CloudPortalCredential(User1).Username+++
+    - TAP: +++@lab.CloudPortalCredential(User1).AccessToken+++
+
 1. Run below command to create container registry.
 
     `az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Basic`
@@ -405,8 +410,6 @@ Build this portion on the machine where Docker is available.
 
     export RESOURCE_GROUP=ResourceGroup1
     ```
-
-    `az login`
 
     `az aks create --resource-group $RESOURCE_GROUP --name bankaclcluster --os-sku AzureLinux --node-count 3 --generate-ssh-keys`
 
