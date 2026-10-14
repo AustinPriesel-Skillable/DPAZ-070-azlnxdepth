@@ -88,7 +88,7 @@ After completing this lab, you will be able to:
 
 1. Run below command to create secure cluster.
 
-    `az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --os-sku AzureLinuxOSGuard --node-osdisk-type Managed --enable-fips-image --enable-secure-boot --enable-vtpm --generate-ssh-keys`
+    `az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --os-sku AzureLinuxOSGuard --node-osdisk-type Managed --enable-fips-image --enable-secure-boot --enable-vtpm --node-vm-size Standard_D4ads_v5 --node-count 3 --generate-ssh-keys`
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab07/media/image8.png)
 
