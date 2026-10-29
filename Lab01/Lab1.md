@@ -34,7 +34,6 @@ By the end of the lab, students will be able to:
 1. Click on Create and select **Virtual machine.**
 
     ![](https://raw.githubusercontent.com/technofocus-pte/azlnxdepth/refs/heads/main/Lab01/media/image2.png)
-Virtual machine name : +++vm-storefront@lab.LabInstance.Id+++
 
 1. Select below values
 
